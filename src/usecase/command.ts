@@ -1,12 +1,7 @@
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
 import {translate} from '../translations';
-
-export interface Command {
-    readonly server: CFToolsServer
-
-    execute(client: CFToolsClient): Promise<string>
-}
+import {Command} from '../domain/command';
 
 export class CheckPriorityQueue implements Command {
     public static readonly COMMAND = 'hasPriority';

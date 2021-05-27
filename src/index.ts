@@ -6,6 +6,7 @@ import {Servers} from './adapter/servers';
 import {CFToolsClient, CFToolsClientBuilder} from 'cftools-sdk';
 import * as fs from 'fs';
 import {ApplicationConfig} from './domain/app';
+import {factories} from './usecase/command';
 
 dotenv();
 
@@ -14,7 +15,7 @@ class App {
     private servers: Servers;
 
     constructor(servers: CFToolsServer[], private readonly cftools: CFToolsClient) {
-        this.servers = new Servers(servers);
+        this.servers = new Servers(servers, factories);
     }
 
     public async setup() {

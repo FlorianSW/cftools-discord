@@ -1,8 +1,9 @@
-import {Command, factories} from '../usecase/command';
+import {CommandFactory} from '../usecase/command';
 import {CFToolsServer, UnknownCommand, UnknownServer} from '../domain/cftools';
+import {Command} from '../domain/command';
 
 export class Servers {
-    constructor(private readonly servers: CFToolsServer[]) {
+    constructor(private readonly servers: CFToolsServer[], private readonly factories: Map<string, CommandFactory>) {
     }
 
     newCommand(parameters: string[]): Command {
@@ -17,7 +18,7 @@ export class Servers {
         if (command === undefined) {
             throw new UnknownCommand();
         }
-        const factory = factories.get(command);
+        const factory = this.factories.get(command);
         if (factory === undefined) {
             throw new UnknownCommand();
         }
