@@ -1,4 +1,4 @@
-import {CheckPriorityQueue, Command, factories} from '../usecase/command';
+import {Command, factories} from '../usecase/command';
 import {CFToolsServer, UnknownCommand, UnknownServer} from '../domain/cftools';
 
 export class Servers {
@@ -21,7 +21,13 @@ export class Servers {
         if (factory === undefined) {
             throw new UnknownCommand();
         }
-        return factory(server, parameters);
+        let cmdParameters;
+        if (this.servers.length === 1 && parameters[0] !== server.name) {
+            cmdParameters = parameters.slice(1);
+        } else {
+            cmdParameters = parameters.slice(2);
+        }
+        return factory(server, cmdParameters);
     }
 
     private findServer(parameters: string[]): CFToolsServer | undefined {
@@ -39,6 +45,6 @@ export class Servers {
         } else {
             cmd = parameters[1];
         }
-        return server.availableCommands.find((c) => c === cmd);
+        return server.commandMapping[cmd];
     }
 }

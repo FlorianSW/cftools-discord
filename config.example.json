@@ -1,0 +1,14 @@
+{
+  "servers": [{
+    "name": "example-server",
+    "serverApiId": "CFTools Cloud Server ID",
+    "commandMapping": {
+      "hasPriority": "hasPriority"
+    }
+  }],
+  "discordToken": "Discord app token",
+  "cftools": {
+    "applicationId": "CFTools Cloud application ID",
+    "secret": "CFTools Cloud application secret"
+  }
+}

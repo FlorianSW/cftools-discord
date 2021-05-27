@@ -1,7 +1,7 @@
 export interface CFToolsServer {
     name: string,
     serverApiId: string,
-    availableCommands: string[],
+    commandMapping: { [key: string]: string },
 }
 
 export class UnknownServer extends Error {

@@ -9,11 +9,13 @@ describe('Servers', () => {
         servers = new Servers([{
             name: 'A_SERVER',
             serverApiId: 'SOME_ID',
-            availableCommands: [CheckPriorityQueue.COMMAND]
+            commandMapping: {
+                [CheckPriorityQueue.COMMAND]: CheckPriorityQueue.COMMAND
+            }
         }, {
             name: 'ANOTHER_SERVER',
             serverApiId: 'ANOTHER_ID',
-            availableCommands: []
+            commandMapping: {}
         }]);
     });
 
@@ -33,7 +35,9 @@ describe('Servers', () => {
         servers = new Servers([{
             name: 'A_SERVER',
             serverApiId: 'SOME_ID',
-            availableCommands: [CheckPriorityQueue.COMMAND]
+            commandMapping: {
+                [CheckPriorityQueue.COMMAND]: CheckPriorityQueue.COMMAND
+            }
         }]);
         expect(servers.newCommand(['hasPriority', '123456789'])).toBeInstanceOf(CheckPriorityQueue);
     });

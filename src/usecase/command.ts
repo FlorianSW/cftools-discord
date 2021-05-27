@@ -33,6 +33,7 @@ export class CheckPriorityQueue implements Command {
             if (error instanceof ResourceNotFound) {
                 return translate('STEAM_ID_UNKNOWN');
             }
+            console.error(error);
             return translate('ERROR_UNKNOWN');
         }
     }
@@ -41,6 +42,6 @@ export class CheckPriorityQueue implements Command {
 export type CommandFactory = (server: CFToolsServer, parameters: string[]) => Command;
 export const factories = new Map<string, CommandFactory>([
     [CheckPriorityQueue.COMMAND, (server, parameters) => {
-        return new CheckPriorityQueue(server, SteamId64.of(parameters[2]));
+        return new CheckPriorityQueue(server, SteamId64.of(parameters[0]));
     }]
 ]);
