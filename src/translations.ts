@@ -4,6 +4,8 @@ const messages: { [key: string]: string } = {
     PRIORITY_EXPIRES_NEVER: 'Never',
 
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
+    ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',
+    ERROR_UNKNOWN_COMMAND: 'The used command is unknown.',
     ERROR_UNKNOWN: 'An unknown error occurred :woozy_face:',
 };
 

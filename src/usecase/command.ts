@@ -20,7 +20,7 @@ export class CheckPriorityQueue implements Command {
             } else {
                 return translate('PRIORITY_UNTIL', {
                     params: {
-                        expires: response?.expiration ?
+                        expires: response?.expiration instanceof Date ?
                             (response.expiration as Date).toLocaleString() :
                             translate('PRIORITY_EXPIRES_NEVER')
                     }

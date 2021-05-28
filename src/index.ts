@@ -1,12 +1,13 @@
 import {Client, Message} from 'discord.js';
 import {config as dotenv} from 'dotenv'
-import {CFToolsServer} from './domain/cftools';
+import {CFToolsServer, UnknownCommand, UnknownServer} from './domain/cftools';
 import {toParameters} from './adapter/discord';
 import {Servers} from './adapter/servers';
 import {CFToolsClient, CFToolsClientBuilder} from 'cftools-sdk';
 import * as fs from 'fs';
 import {ApplicationConfig} from './domain/app';
 import {factories} from './usecase/command';
+import {translate} from './translations';
 
 dotenv();
 
@@ -28,9 +29,23 @@ class App {
 
     private async onMessage(message: Message): Promise<void> {
         const parameters = toParameters(message);
-        const command = this.servers.newCommand(parameters);
-        const response = await command.execute(this.cftools);
-        await message.reply(response);
+        try {
+            const command = this.servers.newCommand(parameters);
+            const response = await command.execute(this.cftools);
+            await message.reply(response);
+        } catch (e) {
+            let translateKey: string;
+            if (e instanceof UnknownServer) {
+                translateKey = 'ERROR_UNKNOWN_SERVER'
+            }
+            if (e instanceof UnknownCommand) {
+                translateKey = 'ERROR_UNKNOWN_COMMAND'
+            } else {
+                console.error('Unknown error occurred: ', e);
+                return;
+            }
+            await message.reply(translate(translateKey));
+        }
     }
 
     private createDiscordClient(): Promise<Client> {
