@@ -13,5 +13,6 @@ COPY package.json .
 RUN npm install --only=production
 RUN apk del build-dependencies
 COPY --from=build /code/dist/ .
+ENV CONFIG_FILE=/app/config.json
 
 CMD ["node", "/app/index.js"]

@@ -1,6 +1,7 @@
 const messages: { [key: string]: string } = {
     NO_PRIORITY: 'You do not have priority queue for this server :disappointed_relieved:',
     PRIORITY_UNTIL: 'You have priority queue for this server, which will expire at: {{expires}} :partying_face:',
+    PRIORITY_EXPIRES_NEVER: 'Never',
 
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
     ERROR_UNKNOWN: 'An unknown error occurred :woozy_face:',
