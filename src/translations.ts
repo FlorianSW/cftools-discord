@@ -1,6 +1,8 @@
 const messages: { [key: string]: string } = {
-    NO_PRIORITY: 'You do not have priority queue for this server :disappointed_relieved:',
-    PRIORITY_UNTIL: 'You have priority queue for this server, which will expire at: {{expires}} :partying_face:',
+    PRIORITY_TITLE: 'Priority Queue information for {{id}}',
+    NO_PRIORITY: 'You do not have priority queue for this server.',
+    HAS_PRIORITY: 'You have priority queue for this server.',
+    PRIORITY_EXPIRES: 'Expires',
     PRIORITY_EXPIRES_NEVER: 'Never',
 
     LEADERBOARD_TITLE: 'Top 10 {{metric}} on {{server}}',

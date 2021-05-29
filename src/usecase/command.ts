@@ -4,6 +4,14 @@ import {translate} from '../translations';
 import {Command} from '../domain/command';
 import {MessageEmbed} from 'discord.js';
 
+function defaultResponse(): MessageEmbed {
+    return new MessageEmbed()
+        .setAuthor('CFTools-Discord bot')
+        .setFooter('Bot made by FlorianSW/go2tech.de with data from CFTools Cloud')
+        .setTimestamp(new Date())
+        .setColor('BLUE');
+}
+
 export class CheckPriorityQueue implements Command {
     public static readonly COMMAND = 'hasPriority';
 
@@ -16,16 +24,24 @@ export class CheckPriorityQueue implements Command {
                 serverApiId: ServerApiId.of(this.server.serverApiId),
                 playerId: this.steamId
             });
-            if (response === null) {
-                return translate('NO_PRIORITY');
-            } else {
-                return translate('PRIORITY_UNTIL', {
+            const message = defaultResponse()
+                .setTitle(translate('PRIORITY_TITLE', {
                     params: {
-                        expires: response?.expiration instanceof Date ?
+                        id: this.steamId.id
+                    }
+                }));
+            if (response === null) {
+                return message.setColor('DARK_RED')
+                    .setDescription(translate('NO_PRIORITY'));
+            } else {
+                return message.setColor('DARK_GREEN')
+                    .setDescription(translate('HAS_PRIORITY'))
+                    .addField(
+                        translate('PRIORITY_EXPIRES'),
+                        response?.expiration instanceof Date ?
                             (response.expiration as Date).toLocaleString() :
                             translate('PRIORITY_EXPIRES_NEVER')
-                    }
-                });
+                    )
             }
         } catch (error) {
             if (error instanceof ResourceNotFound) {
@@ -44,10 +60,7 @@ export class Leaderboard implements Command {
     }
 
     async execute(client: CFToolsClient): Promise<string | MessageEmbed> {
-        const message = new MessageEmbed()
-            .setAuthor('CFTools-Discord bot')
-            .setFooter('Leaderboard made by FlorianSW/go2tech.de with data from CFTools Cloud')
-            .setTimestamp(new Date())
+        const message = defaultResponse()
             .setColor('BLUE')
             .setTitle(translate('LEADERBOARD_TITLE', {
                 params: {
