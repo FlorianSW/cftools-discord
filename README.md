@@ -3,7 +3,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/droidwiki/cftools-discord?style=flat-square)](https://hub.docker.com/r/droidwiki/cftools-discord)
 [![Discord](https://img.shields.io/discord/729467994832371813?color=7289da&label=Discord&logo=discord&logoColor=ffffff&style=flat-square)](https://go2tech.de/discord)
 
-...
+Provides a Discord bot to interact with the CFTools Cloud data which is exposed through the API.
 
 ## Installation and usage
 
@@ -92,3 +92,8 @@ Where:
 * `command`: The command from the command mapping of the server you want to execute.
 * `...parameter`: 0 or more parameters for the command (like the Steam ID).
   See the command reference for available parameters.
+
+
+# Contributions
+
+If a feature, command or something is missing, feel free to open an issue or even a pull request :)
