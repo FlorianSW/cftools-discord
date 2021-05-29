@@ -1,8 +1,6 @@
-import {CFToolsServer} from './cftools';
 import {CFToolsClient} from 'cftools-sdk';
+import {MessageEmbed} from 'discord.js';
 
 export interface Command {
-    readonly server: CFToolsServer
-
-    execute(client: CFToolsClient): Promise<string>
+    execute(client: CFToolsClient): Promise<string | MessageEmbed>
 }

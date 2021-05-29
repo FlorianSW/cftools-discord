@@ -3,7 +3,8 @@
     "name": "example-server",
     "serverApiId": "CFTools Cloud Server ID",
     "commandMapping": {
-      "hasPriority": "hasPriority"
+      "hasPriority": "hasPriority",
+      "leaderboard": "leaderboard"
     }
   }],
   "discordToken": "Discord app token",
