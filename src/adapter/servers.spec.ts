@@ -50,18 +50,29 @@ describe('Servers', () => {
         expect((command as FakeCommand).parameters).toEqual(['123456789']);
     });
 
-    it('returns command without server if only one server registered', () => {
-        servers = new Servers([{
-            name: 'A_SERVER',
-            serverApiId: 'SOME_ID',
-            commandMapping: {
-                hasPriority: 'hasPriority'
-            }
-        }], factories);
+    describe('one server configured only', () => {
+        beforeEach(() => {
+            servers = new Servers([{
+                name: 'A_SERVER',
+                serverApiId: 'SOME_ID',
+                commandMapping: {
+                    hasPriority: 'hasPriority'
+                }
+            }], factories);
+        });
 
-        const command = servers.newCommand(['hasPriority', '123456789']);
+        it('returns command with parameters', () => {
+            const command = servers.newCommand(['hasPriority', '123456789']);
 
-        expect(command).toBeInstanceOf(FakeCommand);
-        expect((command as FakeCommand).parameters).toEqual(['123456789']);
+            expect(command).toBeInstanceOf(FakeCommand);
+            expect((command as FakeCommand).parameters).toEqual(['123456789']);
+        });
+
+        it('returns command without parameters', () => {
+            const command = servers.newCommand(['hasPriority']);
+
+            expect(command).toBeInstanceOf(FakeCommand);
+            expect((command as FakeCommand).parameters).toEqual([]);
+        });
     });
 });

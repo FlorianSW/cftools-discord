@@ -7,7 +7,10 @@ export class Servers {
     }
 
     newCommand(parameters: string[]): Command {
-        if (parameters.length < 2 || (this.servers.length === 1 && parameters.length < 1)) {
+        if (this.servers.length === 1 && parameters.length === 0) {
+            throw new UnknownCommand();
+        }
+        if (this.servers.length !== 1 && parameters.length < 2) {
             throw new UnknownCommand();
         }
         const server = this.findServer(parameters);
