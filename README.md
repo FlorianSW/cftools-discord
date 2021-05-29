@@ -74,6 +74,14 @@ Currently, the following commands are available:
   * Message that the player with the steam ID does not have priority queue for the server
   * Message indicating that the player has priority queue for the server and the date when it expires
   * Message indicating that the player has priority queue for the server and that it never expires
+  
+* `leaderboard`: Returns a leaderboard of most kills for the specified server.
+
+  _Required input_: nothing, example: `@BotName ServerName leaderboard`<br>
+  _Possible responses_:
+  * A leaderboard with up to 7 leaderboard entries, sorted descending starting with the player with the most kills.
+    Shows kills and deaths for each player as well.
+  * A message indicating that there is no data available to generate the leaderboard (used when CFTools Cloud did not return a leaderboard)
 
 ## Usage
 
