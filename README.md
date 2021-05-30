@@ -41,7 +41,7 @@ need to have `nodejs` as well as `npm` installed.
 * Clone the repository: `git clone https://github.com/FlorianSW/cftools-discord.git`
 * Change to the cloned repository: `cd cftools-discord`
 * Build the project: `npm ci && npm run build`
-* Start the bot: `node dist/index.js`
+* Start the bot: `npm start`
 * Configure the bot with the necessary configuration
 
 ### Configure the bot
