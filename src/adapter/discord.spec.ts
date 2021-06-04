@@ -12,4 +12,15 @@ describe('Discord', () => {
             },
         } as Partial<Message> as any as Message)).toEqual(['GT1', 'hasPriority', '123456789']);
     });
+
+    it('handles mentions to non-nicknamed users', () => {
+        expect(toParameters({
+            content: '<@123> GT1 hasPriority 123456789',
+            mentions: {
+                members: new Collection<Snowflake, GuildMember>([
+                    ['123', {id: '123'} as GuildMember]
+                ])
+            },
+        } as Partial<Message> as any as Message)).toEqual(['GT1', 'hasPriority', '123456789']);
+    });
 });
