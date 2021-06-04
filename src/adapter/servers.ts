@@ -1,5 +1,5 @@
 import {CommandFactory} from '../usecase/command';
-import {CFToolsServer, UnknownCommand, UnknownServer} from '../domain/cftools';
+import {CFToolsServer, CommandConfig, CommandId, UnknownCommand, UnknownServer} from '../domain/cftools';
 import {Command} from '../domain/command';
 
 export class Servers {
@@ -21,7 +21,14 @@ export class Servers {
         if (command === undefined) {
             throw new UnknownCommand();
         }
-        const factory = this.factories.get(command);
+        let factory: CommandFactory | undefined;
+        let config: CommandConfig | undefined;
+        if (typeof command === 'string') {
+            factory = this.factories.get(command);
+        } else {
+            factory = this.factories.get(command.command);
+            config = command.config;
+        }
         if (factory === undefined) {
             throw new UnknownCommand();
         }
@@ -31,7 +38,7 @@ export class Servers {
         } else {
             cmdParameters = parameters.slice(2);
         }
-        return factory(server, cmdParameters);
+        return factory(server, cmdParameters, config);
     }
 
     private findServer(parameters: string[]): CFToolsServer | undefined {
@@ -42,7 +49,7 @@ export class Servers {
         return server;
     }
 
-    private findCommand(server: CFToolsServer, parameters: string[]): string | undefined {
+    private findCommand(server: CFToolsServer, parameters: string[]): string | CommandId | undefined {
         let cmd = '';
         if (this.servers.length === 1 && parameters[0] !== server.name) {
             cmd = parameters[0];

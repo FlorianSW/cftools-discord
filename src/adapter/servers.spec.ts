@@ -1,11 +1,11 @@
 import {Servers} from './servers';
-import {CFToolsServer, UnknownCommand, UnknownServer} from '../domain/cftools';
+import {CFToolsServer, CommandConfig, UnknownCommand, UnknownServer} from '../domain/cftools';
 import {CommandFactory} from '../usecase/command';
 import {CFToolsClient} from 'cftools-sdk';
 import {Command} from '../domain/command';
 
 class FakeCommand implements Command {
-    constructor(public readonly server: CFToolsServer, public readonly parameters: string[]) {
+    constructor(public readonly server: CFToolsServer, public readonly parameters: string[], public readonly config?: CommandConfig) {
     }
 
     execute(client: CFToolsClient): Promise<string> {
@@ -16,7 +16,10 @@ class FakeCommand implements Command {
 describe('Servers', () => {
     const factories = new Map<string, CommandFactory>([
         ['hasPriority', (server: CFToolsServer, parameters: string[]) => {
-            return new FakeCommand(server, parameters)
+            return new FakeCommand(server, parameters);
+        }],
+        ['anotherCommand', (server: CFToolsServer, parameters: string[], config?: CommandConfig) => {
+            return new FakeCommand(server, parameters, config);
         }]
     ]);
     let servers: Servers;
@@ -26,7 +29,13 @@ describe('Servers', () => {
             name: 'A_SERVER',
             serverApiId: 'SOME_ID',
             commandMapping: {
-                hasPriority: 'hasPriority'
+                hasPriority: 'hasPriority',
+                anotherCommand: {
+                    command: 'anotherCommand',
+                    config: {
+                        A_KEY: 'A_VALUE',
+                    }
+                },
             }
         }, {
             name: 'ANOTHER_SERVER',
@@ -48,6 +57,15 @@ describe('Servers', () => {
 
         expect(command).toBeInstanceOf(FakeCommand);
         expect((command as FakeCommand).parameters).toEqual(['123456789']);
+    });
+    it('returns command with config', () => {
+        const command = servers.newCommand(['A_SERVER', 'anotherCommand', '123456789']);
+
+        expect(command).toBeInstanceOf(FakeCommand);
+        expect((command as FakeCommand).parameters).toEqual(['123456789']);
+        expect((command as FakeCommand).config).toEqual({
+            A_KEY: 'A_VALUE',
+        });
     });
 
     describe('one server configured only', () => {
