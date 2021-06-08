@@ -78,6 +78,7 @@ const app = new App(
     config.servers,
     new CFToolsClientBuilder()
         .withCredentials(config.cftools.applicationId, config.cftools.secret)
+        .withCache()
         .build()
 );
 app.setup().then(async () => {
