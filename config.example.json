@@ -1,12 +1,27 @@
 {
-  "servers": [{
-    "name": "example-server",
-    "serverApiId": "CFTools Cloud Server ID",
-    "commandMapping": {
-      "hasPriority": "hasPriority",
-      "leaderboard": "leaderboard"
+  "servers": [
+    {
+      "name": "example-server",
+      "serverApiId": "CFTools Cloud Server ID",
+      "commandMapping": {
+        "hasPriority": "hasPriority",
+        "leaderboard": {
+          "command": "leaderboard",
+          "config": {
+            "allowedStats": [
+              "kills",
+              "deaths",
+              "suicides",
+              "playtime",
+              "longest_kill",
+              "longest_shot",
+              "kdratio"
+            ]
+          }
+        }
+      }
     }
-  }],
+  ],
   "discordToken": "Discord app token",
   "cftools": {
     "applicationId": "CFTools Cloud application ID",

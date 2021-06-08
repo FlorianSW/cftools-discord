@@ -5,9 +5,16 @@ const messages: { [key: string]: string } = {
     PRIORITY_EXPIRES: 'Expires',
     PRIORITY_EXPIRES_NEVER: 'Never',
 
+    LEADERBOARD_STAT_NOT_ALLOWED: 'The requested statistic is disabled. Choose one of the allowed ones: {{allowedStats}}',
+    LEADERBOARD_STAT_NOT_KNOWN: 'The requested statistic is not known. Choose one of the allowed ones: {{allowedStats}}',
     LEADERBOARD_TITLE: 'Top 10 {{metric}} on {{server}}',
     LEADERBOARD_KILLS: 'Kills',
     LEADERBOARD_DEATHS: 'Deaths',
+    LEADERBOARD_SUICIDES: 'Suicides',
+    LEADERBOARD_PLAYTIME: 'Playtime',
+    LEADERBOARD_LONGEST_KILL: 'Longest kill',
+    LEADERBOARD_LONGEST_SHOT: 'Longest shot',
+    LEADERBOARD_KD_RATIO: 'Kill/Death ratio',
     LEADERBOARD_EMPTY_TITLE: 'No entries in leaderboard',
     LEADERBOARD_EMPTY_BODY: 'There was no data for the given statistic on that server.',
 

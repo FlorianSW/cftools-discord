@@ -1,9 +1,8 @@
-import {Command} from '../domain/command';
+import {Command, defaultResponse} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
 import {translate} from '../translations';
-import {defaultResponse} from './command';
 
 export class CheckPriorityQueue implements Command {
     public static readonly COMMAND = 'hasPriority';
