@@ -63,6 +63,25 @@ It is an object where the key is the command the user needs to type in when talk
 The value needs to be one of the available commands in the bot (see below for a list of available commands).
 To disable a command, simply remove the command mapping from the object.
 
+Alternatively, some commands allow more in-depth configuration.
+In that case, the command (the value/right-hand side of the object) can be an object instead of the command name itself.
+The object has the following structure:
+
+```json
+{
+  "command": "commandName",
+  "config": {
+    // ...
+  }
+}
+```
+
+Where the value of `command` is one of the available commands (see below for a list of available commands).
+The `config` key is optional, as well as all the options that can be set there.
+If a configuration option (again, a key-value object) is not set, the default value of that option will be used.
+The available configuration options depend on the command that is being configured.
+See the available options in the list of available commands below.
+
 #### Available commands
 
 Currently, the following commands are available:
@@ -77,11 +96,20 @@ Currently, the following commands are available:
   
 * `leaderboard`: Returns a leaderboard of most kills for the specified server.
 
-  _Required input_: nothing, example: `@BotName ServerName leaderboard`<br>
+  _Required input_: nothing, example: `@BotName ServerName leaderboard`
+  <br>
+  
   _Possible responses_:
   * A leaderboard with up to 7 leaderboard entries, sorted descending starting with the player with the most kills.
     Shows kills and deaths for each player as well.
   * A message indicating that there is no data available to generate the leaderboard (used when CFTools Cloud did not return a leaderboard)
+  <br>
+    
+  _Configuration options_:
+  * `defaultStat`: The statistic that should be used to render the leaderboard when the user did not request a specific one
+  * `allowedStats`: An array of available/allowed statistics.
+    This list needs to contain only known statistic values (see the example config for available ones).
+    If the user requests a statistic, which is not listed in this allow-list, no leaderboard will be rendered.
 
 ## Usage
 
