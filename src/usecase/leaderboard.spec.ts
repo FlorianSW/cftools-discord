@@ -30,7 +30,7 @@ describe('Leaderboard', () => {
             allowedStats: ['kills', 'suicides'], defaultStat: 'kills'
         });
 
-        const response = await command.execute(new CFToolsClientBuilder().build());
+        const response = await command.execute(new CFToolsClientBuilder().build(), new MessageEmbed());
 
         expect(response).toEqual(translate('LEADERBOARD_STAT_NOT_ALLOWED', {
             params: {
@@ -44,7 +44,7 @@ describe('Leaderboard', () => {
             allowedStats: ['deaths'], defaultStat: 'deaths'
         });
 
-        const response = await command.execute(new CFToolsClientBuilder().build());
+        const response = await command.execute(new CFToolsClientBuilder().build(), new MessageEmbed());
 
         expect(response).toEqual(translate('LEADERBOARD_STAT_NOT_KNOWN', {
             params: {
@@ -58,7 +58,7 @@ describe('Leaderboard', () => {
             allowedStats: ['kills', 'suicides'], defaultStat: 'suicides'
         });
 
-        const response = await command.execute(client as CFToolsClient);
+        const response = await command.execute(client as CFToolsClient, new MessageEmbed());
 
         expect(response).toBeInstanceOf(MessageEmbed);
         expect(client.getLeaderboard).toHaveBeenCalledTimes(1);
@@ -81,7 +81,7 @@ describe('Leaderboard', () => {
             allowedStats: [stat], defaultStat: 'suicides'
         });
 
-        await command.execute(client as CFToolsClient);
+        await command.execute(client as CFToolsClient, new MessageEmbed());
 
         expect(client.getLeaderboard).toHaveBeenCalledTimes(1);
         const call = (client.getLeaderboard as Mock).mock.calls[0];

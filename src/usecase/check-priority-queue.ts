@@ -10,13 +10,13 @@ export class CheckPriorityQueue implements Command {
     constructor(private readonly server: CFToolsServer, private readonly steamId: SteamId64) {
     }
 
-    async execute(client: CFToolsClient): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
         try {
             const response = await client.getPriorityQueue({
                 serverApiId: ServerApiId.of(this.server.serverApiId),
                 playerId: this.steamId
             });
-            const message = defaultResponse()
+            const message = messageBuilder
                 .setTitle(translate('PRIORITY_TITLE', {
                     params: {
                         id: this.steamId.id

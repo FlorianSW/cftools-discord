@@ -10,7 +10,7 @@ export class DetailsCommand implements Command {
     constructor(private readonly server: CFToolsServer) {
     }
 
-    async execute(client: CFToolsClient): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
         try {
             const response = await client.getGameServerDetails({
                 game: Game.DayZ,
@@ -21,7 +21,7 @@ export class DetailsCommand implements Command {
             if (response.status.players.queue !== 0) {
                 players += ` (+${response.status.players.queue})`;
             }
-            return defaultResponse()
+            return messageBuilder
                 .setTitle(translate('DETAILS_TITLE', {
                     params: {
                         serverName: this.server.name

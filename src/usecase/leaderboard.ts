@@ -104,7 +104,7 @@ export class Leaderboard implements Command {
     constructor(private readonly server: CFToolsServer, private readonly parameters: string[], private readonly config: Config) {
     }
 
-    async execute(client: CFToolsClient): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
         const stat = this.resolveCommand();
         if (typeof stat === 'string') {
             return stat;
@@ -116,8 +116,7 @@ export class Leaderboard implements Command {
             limit: 7,
         });
 
-        const message = defaultResponse()
-            .setColor('BLUE')
+        const message = messageBuilder
             .setTitle(translate('LEADERBOARD_TITLE', {
                 params: {
                     server: this.server.name,

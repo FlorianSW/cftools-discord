@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import {ApplicationConfig} from './domain/app';
 import {factories} from './usecase/command';
 import {translate} from './translations';
+import {defaultResponse} from './domain/command';
 
 dotenv();
 
@@ -17,6 +18,10 @@ class App {
 
     constructor(servers: CFToolsServer[], private readonly cftools: CFToolsClient) {
         this.servers = new Servers(servers, factories);
+    }
+
+    private get author(): string {
+        return config?.discord?.author || 'CFTools-Discord bot';
     }
 
     public async setup() {
@@ -31,7 +36,7 @@ class App {
         const parameters = toParameters(message);
         try {
             const command = this.servers.newCommand(parameters);
-            const response = await command.execute(this.cftools);
+            const response = await command.execute(this.cftools, defaultResponse().setAuthor(this.author));
             await message.reply(response);
         } catch (e) {
             let translateKey: string;
@@ -66,7 +71,8 @@ class App {
             });
             client.on('warn', console.log);
 
-            client.login(config.discordToken);
+            // TODO: Deprecated use of config.discordToken, remove when appropriate migration time given
+            client.login(config?.discord?.token || config.discordToken);
         });
     }
 }
