@@ -106,7 +106,9 @@ Currently, the following commands are available:
 
 * `hasPriority`: Checks if the provided Steam ID has an entry in the priority queue list of the server.
 
-  _Required input_: `SteamID`, example: `@BotName ServerName hasPriority 76561198012102485`<br>
+  _Required input_: `SteamID`, example: `@BotName ServerName hasPriority 76561198012102485`
+  <br>
+  
   _Possible responses_:
   * Message that the player with the steam ID does not have priority queue for the server
   * Message indicating that the player has priority queue for the server and the date when it expires
@@ -128,6 +130,16 @@ Currently, the following commands are available:
   * `allowedStats`: An array of available/allowed statistics.
     This list needs to contain only known statistic values (see the example config for available ones).
     If the user requests a statistic, which is not listed in this allow-list, no leaderboard will be rendered.
+
+* `details`: Prints some general server information, like the current time, players online, etc.
+
+  _Required input_: nothing, example: `@BotName ServerName details`
+  <br>
+  
+  _Possible responses_:
+  * A panel with a summary of available, general information about the server
+  * An error message explainaing that the server could not be found in CFTools Cloud
+  <br>
 
 ## Usage
 
