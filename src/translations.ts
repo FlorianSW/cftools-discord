@@ -18,6 +18,13 @@ const messages: { [key: string]: string } = {
     LEADERBOARD_EMPTY_TITLE: 'No entries in leaderboard',
     LEADERBOARD_EMPTY_BODY: 'There was no data for the given statistic on that server.',
 
+    DETAILS_TITLE: 'Game server details for {{serverName}}',
+    DETAILS_SERVER_NAME: ':name_badge: Server name',
+    DETAILS_MAP: ':map: Map',
+    DETAILS_PLAYERS: ':walking: Players (+Queued)',
+    DETAILS_TIME: ':clock3: Time',
+    DETAILS_ERROR_SERVER_NOT_FOUND: 'The server does not exist in CFTools Cloud. This is most likely an error int he configuration of this bot.',
+
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
     ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',
     ERROR_UNKNOWN_COMMAND: 'The used command is unknown.',

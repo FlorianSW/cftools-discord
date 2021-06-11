@@ -1,6 +1,10 @@
 export interface CFToolsServer {
     name: string,
     serverApiId: string,
+    connect: {
+        ip: string,
+        port: number,
+    },
     commandMapping: { [key: string]: string | CommandId },
 }
 

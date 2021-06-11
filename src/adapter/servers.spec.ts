@@ -28,6 +28,10 @@ describe('Servers', () => {
         servers = new Servers([{
             name: 'A_SERVER',
             serverApiId: 'SOME_ID',
+            connect: {
+                ip: '127.0.0.1',
+                port: 2302
+            },
             commandMapping: {
                 hasPriority: 'hasPriority',
                 anotherCommand: {
@@ -39,6 +43,10 @@ describe('Servers', () => {
             }
         }, {
             name: 'ANOTHER_SERVER',
+            connect: {
+                ip: '127.0.0.1',
+                port: 2402
+            },
             serverApiId: 'ANOTHER_ID',
             commandMapping: {}
         }], factories);
@@ -73,6 +81,10 @@ describe('Servers', () => {
             servers = new Servers([{
                 name: 'A_SERVER',
                 serverApiId: 'SOME_ID',
+                connect: {
+                    ip: '127.0.0.1',
+                    port: 2302
+                },
                 commandMapping: {
                     hasPriority: 'hasPriority'
                 }

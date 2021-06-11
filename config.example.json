@@ -3,6 +3,10 @@
     {
       "name": "example-server",
       "serverApiId": "CFTools Cloud Server ID",
+      "connect": {
+        "ip": "127.0.0.1",
+        "port": 2302
+      },
       "commandMapping": {
         "hasPriority": "hasPriority",
         "leaderboard": {

@@ -3,12 +3,17 @@ import {CFToolsClient, CFToolsClientBuilder, LeaderboardItem, Statistic} from 'c
 import {translate} from '../translations';
 import {MessageEmbed} from 'discord.js';
 import Mock = jest.Mock;
+import {CFToolsServer} from '../domain/cftools';
 
 const aServer = {
     serverApiId: 'A_SERVER_ID',
     commandMapping: {},
+    connect: {
+        ip: '127.0.0.1',
+        port: 2302
+    },
     name: 'A_NAME',
-};
+} as CFToolsServer;
 
 describe('Leaderboard', () => {
     let client: CFToolsClient;
