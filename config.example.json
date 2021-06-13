@@ -9,9 +9,11 @@
       },
       "commandMapping": {
         "hasPriority": "hasPriority",
+        "details": "details",
         "leaderboard": {
           "command": "leaderboard",
           "config": {
+            "defaultStat": "kills",
             "allowedStats": [
               "kills",
               "deaths",
