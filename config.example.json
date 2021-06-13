@@ -28,7 +28,8 @@
   ],
   "discord": {
     "token": "Discord app token",
-    "author": "Optional author name (remove to use default)"
+    "author": "Optional author name (remove to use default)",
+    "channels": false
   },
   "cftools": {
     "applicationId": "CFTools Cloud application ID",

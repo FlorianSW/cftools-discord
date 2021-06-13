@@ -1,4 +1,4 @@
-import {Client, Message} from 'discord.js';
+import {Client, Message, TextChannel} from 'discord.js';
 import {config as dotenv} from 'dotenv'
 import {CFToolsServer, UnknownCommand, UnknownServer} from './domain/cftools';
 import {toParameters} from './adapter/discord';
@@ -11,6 +11,14 @@ import {translate} from './translations';
 import {defaultResponse} from './domain/command';
 
 dotenv();
+
+function isAllowedChannel(message: Message) {
+    if (config.discord?.channels === undefined || typeof config.discord?.channels === 'boolean') {
+        return true;
+    }
+    return message.channel instanceof TextChannel && config.discord.channels.includes(message.channel.name);
+
+}
 
 class App {
     private client: Client | undefined;
@@ -61,7 +69,7 @@ class App {
                 resolve(client);
             });
             client.on('message', async (message: Message) => {
-                if (this.client?.user && message.mentions.has(this.client?.user)) {
+                if (this.client?.user && message.mentions.has(this.client?.user) && isAllowedChannel(message)) {
                     await this.onMessage(message);
                 }
             });

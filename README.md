@@ -141,6 +141,25 @@ Currently, the following commands are available:
   * An error message explainaing that the server could not be found in CFTools Cloud
   <br>
 
+#### Limit the bot to specific channels
+
+You can configure the bot to listen to messages in specific channels only.
+To enable that feature, set the `channels` option in the `discord` object of the configuration to an array of channel names.
+For example:
+
+```json
+{
+  // ...
+  "discord": {
+    // ...
+    "channels": ["Channel 1", "Channel 2"]
+  }
+}
+```
+
+In order to disable this feature remove the `channels` property or set it to the value `false`.
+Doing so will make the bot to listen for messages in all channels.
+
 ## Usage
 
 Once configured and added your discord server, the bot can be used by writing message to it.
@@ -158,7 +177,6 @@ Where:
 * `command`: The command from the command mapping of the server you want to execute.
 * `...parameter`: 0 or more parameters for the command (like the Steam ID).
   See the command reference for available parameters.
-
 
 # Contributions
 

@@ -6,6 +6,7 @@ export interface ApplicationConfig {
     discord?: {
         token?: string,
         author?: string,
+        channels?: string[] | boolean,
     },
     cftools: {
         applicationId: string,
