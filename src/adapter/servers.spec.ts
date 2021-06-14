@@ -66,6 +66,14 @@ describe('Servers', () => {
         expect(command).toBeInstanceOf(FakeCommand);
         expect((command as FakeCommand).parameters).toEqual(['123456789']);
     });
+
+    it('returns command when case not matched', () => {
+        const command = servers.newCommand(['A_SERVER', 'hAspRioRiTy', '123456789']);
+
+        expect(command).toBeInstanceOf(FakeCommand);
+        expect((command as FakeCommand).parameters).toEqual(['123456789']);
+    });
+
     it('returns command with config', () => {
         const command = servers.newCommand(['A_SERVER', 'anotherCommand', '123456789']);
 

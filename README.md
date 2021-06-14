@@ -77,7 +77,7 @@ The application you configured with the `cftools` configuration needs to have a 
 Each server required a `name`, which is used by your users when talking with the bot, so keep it short to ensure a good experience for your community.
 
 You can configure available commands for each server with the `commandMapping` property.
-It is an object where the key is the command the user needs to type in when talking with the bot, and the value is the command the bot should execute then.
+It is an object where the key is the cas-insensitive command the user needs to type in when talking with the bot, and the value is the command the bot should execute then.
 The value needs to be one of the available commands in the bot (see below for a list of available commands).
 To disable a command, simply remove the command mapping from the object.
 

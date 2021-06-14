@@ -56,6 +56,10 @@ export class Servers {
         } else {
             cmd = parameters[1];
         }
-        return server.commandMapping[cmd];
+        const commandKey = Object.keys(server.commandMapping).find((c) => c.toLocaleLowerCase() === cmd.toLocaleLowerCase());
+        if (commandKey === undefined) {
+            return undefined;
+        }
+        return server.commandMapping[commandKey];
     }
 }
