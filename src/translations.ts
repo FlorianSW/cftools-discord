@@ -1,4 +1,9 @@
 const messages: { [key: string]: string } = {
+    RESPONSE_LOADING_0: 'Crunching data...',
+    RESPONSE_LOADING_1: 'Please hold the line...',
+    RESPONSE_LOADING_2: 'Glueing data together...',
+    RESPONSE_LOADING_3: 'Release the Kraken! jk, please wait...',
+
     PRIORITY_TITLE: 'Priority Queue information for {{id}}',
     NO_PRIORITY: 'You do not have priority queue for this server.',
     HAS_PRIORITY: 'You have priority queue for this server.',

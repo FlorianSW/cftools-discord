@@ -17,7 +17,10 @@ function isAllowedChannel(message: Message) {
         return true;
     }
     return message.channel instanceof TextChannel && config.discord.channels.includes(message.channel.name);
+}
 
+function randomLoadingMessage() {
+    return translate('RESPONSE_LOADING_' + Math.floor(Math.random() * 4));
 }
 
 class App {
@@ -44,8 +47,9 @@ class App {
         const parameters = toParameters(message);
         try {
             const command = this.servers.newCommand(parameters);
+            const reply = await message.channel.send(defaultResponse().setColor('DARK_GREY').setTitle(randomLoadingMessage()));
             const response = await command.execute(this.cftools, defaultResponse().setAuthor(this.author));
-            await message.reply(response);
+            await reply.edit(response);
         } catch (e) {
             let translateKey: string;
             if (e instanceof UnknownServer) {
