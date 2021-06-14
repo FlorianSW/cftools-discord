@@ -178,6 +178,13 @@ Where:
 * `...parameter`: 0 or more parameters for the command (like the Steam ID).
   See the command reference for available parameters.
 
+## Show the player count of the server in the status of the bot
+
+This bot itself _does not_ have a feature to show the count of currently active players on the server in the Bot status (activity).
+It would also not work in a multi-server setup (where this bot serves multiple different servers).
+If you want to show the player count of your server in the discord bot, take a look into my [Discord Player Count bot](https://github.com/FlorianSW/discord-player-count-bot).
+It supports several sources for the player count, including CFTools Cloud.
+
 # Contributions
 
 If a feature, command or something is missing, feel free to open an issue or even a pull request :)
