@@ -4,6 +4,7 @@ const messages: { [key: string]: string } = {
     HAS_PRIORITY: 'You have priority queue for this server.',
     PRIORITY_EXPIRES: 'Expires',
     PRIORITY_EXPIRES_NEVER: 'Never',
+    PRIORITY_NOT_CONFIGURED: 'The server has no priority queue configured.',
 
     LEADERBOARD_STAT_NOT_ALLOWED: 'The requested statistic is disabled. Choose one of the allowed ones: {{allowedStats}}',
     LEADERBOARD_STAT_NOT_KNOWN: 'The requested statistic is not known. Choose one of the allowed ones: {{allowedStats}}',
@@ -24,6 +25,7 @@ const messages: { [key: string]: string } = {
     DETAILS_PLAYERS: ':walking: Players (+Queued)',
     DETAILS_TIME: ':clock3: Time',
     DETAILS_ERROR_SERVER_NOT_FOUND: 'The server does not exist in CFTools Cloud. This is most likely an error int he configuration of this bot.',
+    DETAILS_QUERY_ERROR: 'The server currently has troubles responding with information. Please try again later.',
 
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
     ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',

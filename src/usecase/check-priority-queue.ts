@@ -1,6 +1,6 @@
 import {Command, defaultResponse} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
-import {CFToolsClient, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
+import {CFToolsClient, ResourceNotConfigured, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
 import {translate} from '../translations';
 
@@ -38,6 +38,9 @@ export class CheckPriorityQueue implements Command {
         } catch (error) {
             if (error instanceof ResourceNotFound) {
                 return translate('STEAM_ID_UNKNOWN');
+            }
+            if (error instanceof ResourceNotConfigured) {
+                return translate('PRIORITY_NOT_CONFIGURED');
             }
             console.error(error);
             return translate('ERROR_UNKNOWN');

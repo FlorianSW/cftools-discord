@@ -1,6 +1,6 @@
 import {Command, defaultResponse} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
-import {CFToolsClient, Game, ResourceNotFound} from 'cftools-sdk';
+import {CFToolsClient, Game, GameServerQueryError, ResourceNotFound} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
 import {translate} from '../translations';
 
@@ -34,6 +34,9 @@ export class DetailsCommand implements Command {
         } catch (error) {
             if (error instanceof ResourceNotFound) {
                 return translate('DETAILS_ERROR_SERVER_NOT_FOUND');
+            }
+            if (error instanceof GameServerQueryError) {
+                return translate('DETAILS_QUERY_ERROR');
             }
             console.error(error);
             return translate('ERROR_UNKNOWN');
