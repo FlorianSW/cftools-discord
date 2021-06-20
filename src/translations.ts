@@ -32,6 +32,13 @@ const messages: { [key: string]: string } = {
     DETAILS_ERROR_SERVER_NOT_FOUND: 'The server does not exist in CFTools Cloud. This is most likely an error int he configuration of this bot.',
     DETAILS_QUERY_ERROR: 'The server currently has troubles responding with information. Please try again later.',
 
+    PLAYER_STAT_NAME: 'Player statistics for {{playerName}}',
+    PLAYER_STAT_PLAYTIME: 'Playtime',
+    PLAYER_STAT_KILLS: 'Kills',
+    PLAYER_STAT_DEATHS: 'Deaths',
+    PLAYER_STAT_LONGEST_KILL: 'Longest kill',
+    PLAYER_STAT_WEAPON_MOST_KILLS: 'Favorite weapon',
+
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
     ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',
     ERROR_UNKNOWN_COMMAND: 'The used command is unknown.',
