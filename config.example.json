@@ -10,6 +10,7 @@
       "commandMapping": {
         "hasPriority": "hasPriority",
         "details": "details",
+        "stats": "playerStats",
         "leaderboard": {
           "command": "leaderboard",
           "config": {

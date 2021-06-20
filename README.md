@@ -138,7 +138,17 @@ Currently, the following commands are available:
   
   _Possible responses_:
   * A panel with a summary of available, general information about the server
-  * An error message explainaing that the server could not be found in CFTools Cloud
+  * An error message explaining that the server could not be found in CFTools Cloud
+  <br>
+
+* `playerStats`: Prints statistics about the player associated with the provides Steam ID.
+
+  _Required input_: `SteamID`, example: `@BotName ServerName stats 76561198012102485`
+  <br>
+  
+  _Possible responses_:
+  * A panel with a summary of available statistics about the player
+  * An error message explaining that the Steam ID could not be found in CFTools Cloud
   <br>
 
 #### Limit the bot to specific channels
