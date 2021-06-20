@@ -28,3 +28,10 @@ export class UnknownCommand extends Error {
         Object.setPrototypeOf(this, UnknownCommand.prototype);
     }
 }
+
+export class UsageError extends Error {
+    constructor(public readonly message: string) {
+        super('UsageError');
+        Object.setPrototypeOf(this, UsageError.prototype);
+    }
+}

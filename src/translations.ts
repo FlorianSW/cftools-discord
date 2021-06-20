@@ -43,6 +43,7 @@ const messages: { [key: string]: string } = {
     ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',
     ERROR_UNKNOWN_COMMAND: 'The used command is unknown.',
     ERROR_UNKNOWN: 'An unknown error occurred :woozy_face:',
+    ERROR_STEAM_ID_REQUIRED: 'You need to specify your Steam ID.',
 };
 
 interface TranslateOptions {

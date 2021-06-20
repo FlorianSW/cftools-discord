@@ -1,6 +1,6 @@
 import {Client, Message, TextChannel} from 'discord.js';
 import {config as dotenv} from 'dotenv'
-import {CFToolsServer, UnknownCommand, UnknownServer} from './domain/cftools';
+import {CFToolsServer, UnknownCommand, UnknownServer, UsageError} from './domain/cftools';
 import {toParameters} from './adapter/discord';
 import {Servers} from './adapter/servers';
 import {CFToolsClient, CFToolsClientBuilder} from 'cftools-sdk';
@@ -54,6 +54,10 @@ class App {
             let translateKey: string;
             if (e instanceof UnknownServer) {
                 translateKey = 'ERROR_UNKNOWN_SERVER'
+            }
+            if (e instanceof UsageError) {
+                await message.reply(e.message);
+                return;
             }
             if (e instanceof UnknownCommand) {
                 translateKey = 'ERROR_UNKNOWN_COMMAND'
