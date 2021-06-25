@@ -5,7 +5,7 @@ import {toParameters} from './adapter/discord';
 import {Servers} from './adapter/servers';
 import {CFToolsClient, CFToolsClientBuilder} from 'cftools-sdk';
 import * as fs from 'fs';
-import {ApplicationConfig} from './domain/app';
+import {ApplicationConfig, PresenceConfig} from './domain/app';
 import {factories} from './usecase/command';
 import {translate} from './translations';
 import {defaultResponse} from './domain/command';
@@ -27,7 +27,7 @@ class App {
     private client: Client | undefined;
     private servers: Servers;
 
-    constructor(servers: CFToolsServer[], private readonly cftools: CFToolsClient) {
+    constructor(servers: CFToolsServer[], private readonly cftools: CFToolsClient, private presence?: PresenceConfig) {
         this.servers = new Servers(servers, factories);
     }
 
@@ -74,6 +74,12 @@ class App {
             const client = new Client();
             client.on('ready', () => {
                 console.log(`Logged in as ${client.user?.tag}!`);
+                if (this.presence) {
+                    client.user?.setActivity({
+                        type: this.presence.type,
+                        name: this.presence.text
+                    });
+                }
                 resolve(client);
             });
             client.on('message', async (message: Message) => {
@@ -95,13 +101,19 @@ class App {
 
 const config: ApplicationConfig = JSON.parse(fs.readFileSync(process.env.CONFIG_FILE!!).toString('utf-8'));
 
+let presenceConfig: PresenceConfig | undefined;
+if (config.discord && config.discord.presence && typeof config.discord.presence !== 'boolean') {
+    presenceConfig = config.discord!!.presence;
+}
+
 console.log('Starting Discord Bot...');
 const app = new App(
     config.servers,
     new CFToolsClientBuilder()
         .withCredentials(config.cftools.applicationId, config.cftools.secret)
         .withCache()
-        .build()
+        .build(),
+    presenceConfig
 );
 app.setup().then(async () => {
     console.log('App setup done...');

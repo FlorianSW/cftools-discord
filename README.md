@@ -113,7 +113,7 @@ Currently, the following commands are available:
   * Message that the player with the steam ID does not have priority queue for the server
   * Message indicating that the player has priority queue for the server and the date when it expires
   * Message indicating that the player has priority queue for the server and that it never expires
-  
+
 * `leaderboard`: Returns a leaderboard of most kills for the specified server.
 
   _Required input_: nothing, example: `@BotName ServerName leaderboard`
@@ -169,6 +169,36 @@ For example:
 
 In order to disable this feature remove the `channels` property or set it to the value `false`.
 Doing so will make the bot to listen for messages in all channels.
+
+### Setting the presence/activity in discord
+
+If you want the bot to manage the presence/activity of the bot user within your discord, you may enable it with the `discord.presence` setting.
+The default is `false`, which disables this feature and therefore allows potential other bots to use this activity (e.g. to display the current player count on a server).
+
+To enable this feature, configure it like in this example:
+
+```json
+{
+  // ...
+  "discord": {
+    // ...
+    "presence": {
+      "type": "WATCHING",
+      "text": "go2tech.de"
+    }
+  }
+}
+```
+
+The `type` can be any valid type for a discord presence, at the time of this writing one of:
+- PLAYING
+- STREAMING
+- LISTENING
+- WATCHING
+- CUSTOM_STATUS
+- COMPETING
+
+While the `text` parameter is a freetext field (which may get truncated by discord if to long).
 
 ## Usage
 
