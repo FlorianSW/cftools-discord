@@ -11,6 +11,7 @@
         "hasPriority": "hasPriority",
         "details": "details",
         "stats": "playerStats",
+        "help": "help",
         "leaderboard": {
           "command": "leaderboard",
           "config": {

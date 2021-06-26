@@ -6,6 +6,7 @@ import {Leaderboard} from './leaderboard';
 import {DetailsCommand} from './details';
 import {PlayerStatistics} from './player-statistics';
 import {translate} from '../translations';
+import {HelpCommand} from './help';
 
 function assertSteamId(parameters: string[]) {
     if (parameters.length === 0) {
@@ -14,7 +15,7 @@ function assertSteamId(parameters: string[]) {
 }
 
 export type CommandFactory = (server: CFToolsServer, parameters: string[], config?: CommandConfig) => Command;
-export const factories = new Map<string, CommandFactory>([
+export const factories: Map<string, CommandFactory> = new Map<string, CommandFactory>([
     [CheckPriorityQueue.COMMAND, (server, parameters) => {
         assertSteamId(parameters);
         return new CheckPriorityQueue(server, SteamId64.of(parameters[0]));
@@ -34,5 +35,8 @@ export const factories = new Map<string, CommandFactory>([
             },
             ...config,
         });
+    }],
+    [HelpCommand.COMMAND, (server, parameters) => {
+        return new HelpCommand(server, factories, parameters[0]);
     }]
 ]);

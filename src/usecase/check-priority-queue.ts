@@ -1,4 +1,4 @@
-import {Command, defaultResponse} from '../domain/command';
+import {Command} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, ResourceNotConfigured, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
