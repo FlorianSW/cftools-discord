@@ -1,12 +1,20 @@
 import {CommandFactory} from '../usecase/command';
-import {CFToolsServer, CommandConfig, CommandId, UnknownCommand, UnknownServer} from '../domain/cftools';
+import {
+    CFToolsServer,
+    CommandConfig,
+    CommandId,
+    CommandNotAllowed,
+    UnknownCommand,
+    UnknownServer
+} from '../domain/cftools';
 import {Command} from '../domain/command';
+import {GuildMember} from 'discord.js';
 
 export class Servers {
     constructor(private readonly servers: CFToolsServer[], private readonly factories: Map<string, CommandFactory>) {
     }
 
-    newCommand(parameters: string[]): Command {
+    newCommand(parameters: string[], forMember: GuildMember): Command {
         if (this.servers.length === 1 && parameters.length === 0) {
             throw new UnknownCommand();
         }
@@ -32,6 +40,13 @@ export class Servers {
         if (factory === undefined) {
             throw new UnknownCommand();
         }
+        if (typeof command !== 'string' && command.requiresRole) {
+            const ownsRole = forMember.roles.cache.find((r) => command.requiresRole!!.includes(r.name));
+            if (!ownsRole) {
+                throw new CommandNotAllowed();
+            }
+        }
+
         let cmdParameters;
         if (this.servers.length === 1 && parameters[0] !== server.name) {
             cmdParameters = parameters.slice(1);

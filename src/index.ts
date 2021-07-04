@@ -1,6 +1,6 @@
 import {Client, Message, TextChannel} from 'discord.js';
 import {config as dotenv} from 'dotenv'
-import {CFToolsServer, UnknownCommand, UnknownServer, UsageError} from './domain/cftools';
+import {CFToolsServer, CommandNotAllowed, UnknownCommand, UnknownServer, UsageError} from './domain/cftools';
 import {toParameters} from './adapter/discord';
 import {Servers} from './adapter/servers';
 import {CFToolsClient, CFToolsClientBuilder} from 'cftools-sdk';
@@ -46,22 +46,27 @@ class App {
     private async onMessage(message: Message): Promise<void> {
         const parameters = toParameters(message);
         try {
-            const command = this.servers.newCommand(parameters);
+            const command = this.servers.newCommand(parameters, message.member!!);
             const reply = await message.channel.send(defaultResponse().setColor('DARK_GREY').setTitle(randomLoadingMessage()));
             const response = await command.execute(this.cftools, defaultResponse().setAuthor(this.author));
             await reply.edit(response);
         } catch (e) {
-            let translateKey: string;
-            if (e instanceof UnknownServer) {
-                translateKey = 'ERROR_UNKNOWN_SERVER'
-            }
             if (e instanceof UsageError) {
                 await message.reply(e.message);
                 return;
             }
+
+            let translateKey: string | undefined = undefined;
+            if (e instanceof UnknownServer) {
+                translateKey = 'ERROR_UNKNOWN_SERVER';
+            }
+            if (e instanceof CommandNotAllowed) {
+                translateKey = 'ERROR_COMMAND_NOT_ALLOWED';
+            }
             if (e instanceof UnknownCommand) {
-                translateKey = 'ERROR_UNKNOWN_COMMAND'
-            } else {
+                translateKey = 'ERROR_UNKNOWN_COMMAND';
+            }
+            if (translateKey === undefined) {
                 console.error('Unknown error occurred: ', e);
                 return;
             }

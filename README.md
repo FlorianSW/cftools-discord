@@ -88,6 +88,7 @@ The object has the following structure:
 ```json
 {
   "command": "commandName",
+  "requiresRole": [],
   "config": {
     // ...
   }
@@ -95,6 +96,10 @@ The object has the following structure:
 ```
 
 Where the value of `command` is one of the available commands (see below for a list of available commands).
+With `requiresRole` you can define which role the Discord member needs to have in order to execute the given command.
+The default (empty array `[]`) allows everyone to execute the command (no specific role needed).
+You can simply list the names of the roles that a user needs to hold.
+If you specify multiple roles, the user needs to hold _one_ of them (not _all_ of them).
 The `config` key is optional, as well as all the options that can be set there.
 If a configuration option (again, a key-value object) is not set, the default value of that option will be used.
 The available configuration options depend on the command that is being configured.

@@ -58,6 +58,7 @@ const messages: { [key: string]: string } = {
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
     ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',
     ERROR_UNKNOWN_COMMAND: 'The used command is unknown.',
+    ERROR_COMMAND_NOT_ALLOWED: 'You are not allowed to use this command.',
     ERROR_UNKNOWN: 'An unknown error occurred :woozy_face:',
     ERROR_STEAM_ID_REQUIRED: 'You need to specify your Steam ID.',
 };

@@ -12,7 +12,8 @@ export type CommandConfig = { [key: string]: any }
 
 export interface CommandId {
     command: string,
-    config: CommandConfig
+    config: CommandConfig,
+    requiresRole?: string[],
 }
 
 export class UnknownServer extends Error {
@@ -26,6 +27,13 @@ export class UnknownCommand extends Error {
     constructor() {
         super('UnknownCommand');
         Object.setPrototypeOf(this, UnknownCommand.prototype);
+    }
+}
+
+export class CommandNotAllowed extends Error {
+    constructor() {
+        super('CommandNotAllowed');
+        Object.setPrototypeOf(this, CommandNotAllowed.prototype);
     }
 }
 
