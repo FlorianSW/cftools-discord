@@ -17,7 +17,7 @@ const messages: { [key: string]: string } = {
     LEADERBOARD_COMMAND_USAGE: '{{mapping}} [<statistic>]',
     LEADERBOARD_STAT_NOT_ALLOWED: 'The requested statistic is disabled. Choose one of the allowed ones: {{allowedStats}}',
     LEADERBOARD_STAT_NOT_KNOWN: 'The requested statistic is not known. Choose one of the allowed ones: {{allowedStats}}',
-    LEADERBOARD_TITLE: 'Top 10 {{metric}} on {{server}}',
+    LEADERBOARD_TITLE: 'Top 7 {{metric}} on {{server}}',
     LEADERBOARD_KILLS: 'Kills',
     LEADERBOARD_DEATHS: 'Deaths',
     LEADERBOARD_SUICIDES: 'Suicides',
