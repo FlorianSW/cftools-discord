@@ -135,6 +135,7 @@ Currently, the following commands are available:
   * `allowedStats`: An array of available/allowed statistics.
     This list needs to contain only known statistic values (see the example config for available ones).
     If the user requests a statistic, which is not listed in this allow-list, no leaderboard will be rendered.
+  * `numberOfPlayers`: The number of maximal entries rendered in the leaderboard (defaults to 7).
 
 * `details`: Prints some general server information, like the current time, players online, etc.
 

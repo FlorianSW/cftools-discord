@@ -27,7 +27,7 @@ describe('Leaderboard', () => {
 
     it('disallows stats, which are not whitelisted', async () => {
         const command = new Leaderboard(aServer, ['deaths'], {
-            allowedStats: ['kills', 'suicides'], defaultStat: 'kills'
+            allowedStats: ['kills', 'suicides'], defaultStat: 'kills', numberOfPlayers: 7,
         });
 
         const response = await command.execute(new CFToolsClientBuilder().build(), new MessageEmbed());
@@ -41,7 +41,7 @@ describe('Leaderboard', () => {
 
     it('does not process unknown stats', async () => {
         const command = new Leaderboard(aServer, ['unknown'], {
-            allowedStats: ['deaths'], defaultStat: 'deaths'
+            allowedStats: ['deaths'], defaultStat: 'deaths', numberOfPlayers: 7,
         });
 
         const response = await command.execute(new CFToolsClientBuilder().build(), new MessageEmbed());
@@ -55,7 +55,7 @@ describe('Leaderboard', () => {
 
     it('request default stat when not specified', async () => {
         const command = new Leaderboard(aServer, [], {
-            allowedStats: ['kills', 'suicides'], defaultStat: 'suicides'
+            allowedStats: ['kills', 'suicides'], defaultStat: 'suicides', numberOfPlayers: 7,
         });
 
         const response = await command.execute(client as CFToolsClient, new MessageEmbed());
@@ -70,7 +70,7 @@ describe('Leaderboard', () => {
 
     it.each([
         ['deaths', Statistic.DEATHS],
-        ['kdratio', Statistic.KILL_DEATH_RATION],
+        ['kdratio', Statistic.KILL_DEATH_RATIO],
         ['longest_shot', Statistic.LONGEST_SHOT],
         ['longest_kill', Statistic.LONGEST_KILL],
         ['playtime', Statistic.PLAYTIME],
@@ -78,7 +78,7 @@ describe('Leaderboard', () => {
         ['kills', Statistic.KILLS],
     ])('serves requested stat', async (stat: string, expected: Statistic) => {
         const command = new Leaderboard(aServer, [stat], {
-            allowedStats: [stat], defaultStat: 'suicides'
+            allowedStats: [stat], defaultStat: 'suicides', numberOfPlayers: 7,
         });
 
         await command.execute(client as CFToolsClient, new MessageEmbed());

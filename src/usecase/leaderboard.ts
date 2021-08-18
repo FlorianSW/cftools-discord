@@ -5,9 +5,12 @@ import {MessageEmbed} from 'discord.js';
 import {translate} from '../translations';
 import {secondsToHours} from '../seconds-to-hours';
 
+const MAX_DISCORD_FIELD_SIZE = 1024;
+
 interface Config extends CommandConfig {
     allowedStats: (keyof typeof statMapping)[],
-    defaultStat: keyof typeof statMapping
+    defaultStat: keyof typeof statMapping,
+    numberOfPlayers: number,
 }
 
 interface Mapping {
@@ -46,31 +49,84 @@ const statMapping: { [key: string]: Mapping } = {
     },
 }
 
-function renderKillDeath(items: LeaderboardItem[], message: MessageEmbed): MessageEmbed {
-    for (let item of items) {
-        message.addField(item.rank, item.name, true)
-            .addField(translate('LEADERBOARD_KILLS'), item.kills, true)
-            .addField(translate('LEADERBOARD_DEATHS'), item.deaths, true);
+function maxLength(items: LeaderboardItem[], label: string, valueFn: (item: LeaderboardItem) => string): number {
+    const lengths = items.map((i) => valueFn(i).length);
+    lengths.push(label.length);
+    return lengths.sort((a, b) => b - a)[0];
+}
+
+function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], message: MessageEmbed): MessageEmbed {
+    const longestName = maxLength(items, translate('LEADERBOARD_NAME'), (item) => item.name);
+    const longestKills = maxLength(items, translate('LEADERBOARD_KILLS'), (item) => item.kills.toString(10));
+    const longestDeaths = maxLength(items, translate('LEADERBOARD_DEATHS'), (item) => item.deaths.toString(10));
+
+    if (renderInline) {
+        let text = '```' +
+            translate('LEADERBOARD_NAME') + ' '.repeat(longestName - translate('LEADERBOARD_NAME').length) + '\t' +
+            translate('LEADERBOARD_KILLS') + ' '.repeat(longestKills - translate('LEADERBOARD_KILLS').length) + '\t' +
+            translate('LEADERBOARD_DEATHS') + ' '.repeat(longestDeaths - translate('LEADERBOARD_DEATHS').length) + '\n\n';
+        for (let item of items) {
+            const toAppend = item.name + ' '.repeat(longestName - item.name.length) + '\t' +
+                item.kills + ' '.repeat(longestKills - item.kills.toString(10).length) + '\t' +
+                item.deaths + ' '.repeat(longestDeaths - item.deaths.toString(10).length) + '\n';
+
+            if (text.length + 6 + toAppend.length >= MAX_DISCORD_FIELD_SIZE) {
+                text += '...';
+                break;
+            }
+            text += toAppend;
+        }
+        text += '```';
+        message.addField('\u200b', text);
+    } else {
+        for (let item of items) {
+            message.addField(item.rank, item.name, true)
+                .addField(translate('LEADERBOARD_KILLS'), item.kills, true)
+                .addField(translate('LEADERBOARD_DEATHS'), item.deaths, true);
+        }
     }
     return message;
 }
 
 function renderSingle(
+    renderInline: boolean,
     items: LeaderboardItem[],
     message: MessageEmbed,
     titleKey: string,
     itemKey: keyof LeaderboardItem | ((item: LeaderboardItem) => string),
 ): MessageEmbed {
-    let valueFn;
+    let valueFn: (item: LeaderboardItem) => string;
     if (typeof itemKey === 'string') {
         valueFn = (item: LeaderboardItem) => item[itemKey] as string
     } else {
         valueFn = itemKey;
     }
-    for (let item of items) {
-        message.addField(item.rank, item.name, true)
-            .addField('\u200b', '\u200b', true)
-            .addField(translate(titleKey), valueFn(item), true);
+
+    const longestName = maxLength(items, translate('LEADERBOARD_NAME'), (item) => item.name);
+    const longestValue = maxLength(items, translate(titleKey), valueFn);
+
+    if (renderInline) {
+        let text = '```' +
+            translate('LEADERBOARD_NAME') + ' '.repeat(longestName - translate('LEADERBOARD_NAME').length) + '\t\t' +
+            translate(titleKey) + ' '.repeat(longestValue - translate(titleKey).length) + '\n\n';
+        for (let item of items) {
+            const toAppend = item.name + ' '.repeat(longestName - item.name.length) + '\t\t' +
+                valueFn(item) + ' '.repeat(longestValue - valueFn(item).length) + '\n';
+
+            if (text.length + 6 + toAppend.length >= MAX_DISCORD_FIELD_SIZE) {
+                text += '...';
+                break;
+            }
+            text += toAppend;
+        }
+        text += '```';
+        message.addField('\u200b', text);
+    } else {
+        for (let item of items) {
+            message.addField(item.rank, item.name, true)
+                .addField('\u200b', '\u200b', true)
+                .addField(translate(titleKey), valueFn(item), true);
+        }
     }
     return message;
 }
@@ -90,12 +146,13 @@ export class Leaderboard implements Command {
             serverApiId: ServerApiId.of(this.server.serverApiId),
             order: 'ASC',
             statistic: stat.requestStatistic,
-            limit: 7,
+            limit: this.config.numberOfPlayers,
         });
 
         const message = messageBuilder
             .setTitle(translate('LEADERBOARD_TITLE', {
                 params: {
+                    amount: this.config.numberOfPlayers.toString(10),
                     server: this.server.name,
                     metric: translate(stat.metricKey)
                 }
@@ -109,21 +166,25 @@ export class Leaderboard implements Command {
         }
     }
 
+    private mustRenderInline(): boolean {
+        return this.config.numberOfPlayers * 3 > 25;
+    }
+
     private renderLeaderboard(stat: Mapping, response: LeaderboardItem[], message: MessageEmbed): MessageEmbed {
         switch (stat.requestStatistic) {
             case Statistic.KILLS:
             case Statistic.DEATHS:
-                return renderKillDeath(response, message);
+                return renderKillDeath(this.mustRenderInline(), response, message);
             case Statistic.SUICIDES:
-                return renderSingle(response, message, 'LEADERBOARD_SUICIDES', 'suicides');
+                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_SUICIDES', 'suicides');
             case Statistic.PLAYTIME:
-                return renderSingle(response, message, 'LEADERBOARD_PLAYTIME', (item: LeaderboardItem) => secondsToHours(item.playtime));
+                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_PLAYTIME', (item: LeaderboardItem) => secondsToHours(item.playtime));
             case Statistic.KILL_DEATH_RATIO:
-                return renderSingle(response, message, 'LEADERBOARD_KD_RATIO', 'killDeathRation');
+                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_KD_RATIO', 'killDeathRation');
             case Statistic.LONGEST_KILL:
-                return renderSingle(response, message, 'LEADERBOARD_LONGEST_KILL', (item: LeaderboardItem) => item.longestKill + 'm');
+                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_LONGEST_KILL', (item: LeaderboardItem) => item.longestKill + 'm');
             case Statistic.LONGEST_SHOT:
-                return renderSingle(response, message, 'LEADERBOARD_LONGEST_SHOT', (item: LeaderboardItem) => item.longestShot + 'm');
+                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_LONGEST_SHOT', (item: LeaderboardItem) => item.longestShot + 'm');
             default:
                 throw Error('Can not render unknown requested statistic.');
         }

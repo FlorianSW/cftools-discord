@@ -31,6 +31,7 @@ export const factories: Map<string, CommandFactory> = new Map<string, CommandFac
         return new Leaderboard(server, parameters, {
             ...{
                 defaultStat: 'kills',
+                numberOfPlayers: 7,
                 allowedStats: ['kills', 'deaths', 'suicides', 'playtime', 'longest_kill', 'longest_shot', 'kdratio']
             },
             ...config,
