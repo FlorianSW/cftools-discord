@@ -56,17 +56,21 @@ function maxLength(items: LeaderboardItem[], label: string, valueFn: (item: Lead
 }
 
 function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], message: MessageEmbed): MessageEmbed {
+    const longestRank = maxLength(items, translate('LEADERBOARD_RANK'), (item) => item.rank.toString(10));
     const longestName = maxLength(items, translate('LEADERBOARD_NAME'), (item) => item.name);
     const longestKills = maxLength(items, translate('LEADERBOARD_KILLS'), (item) => item.kills.toString(10));
     const longestDeaths = maxLength(items, translate('LEADERBOARD_DEATHS'), (item) => item.deaths.toString(10));
 
     if (renderInline) {
         let text = '```' +
+            translate('LEADERBOARD_RANK') + ' '.repeat(longestRank - translate('LEADERBOARD_RANK').length) + '\t' +
             translate('LEADERBOARD_NAME') + ' '.repeat(longestName - translate('LEADERBOARD_NAME').length) + '\t' +
             translate('LEADERBOARD_KILLS') + ' '.repeat(longestKills - translate('LEADERBOARD_KILLS').length) + '\t' +
             translate('LEADERBOARD_DEATHS') + ' '.repeat(longestDeaths - translate('LEADERBOARD_DEATHS').length) + '\n\n';
         for (let item of items) {
-            const toAppend = item.name + ' '.repeat(longestName - item.name.length) + '\t' +
+            const toAppend =
+                ' '.repeat(longestRank - item.rank.toString(10).length) + item.rank + '\t' +
+                item.name + ' '.repeat(longestName - item.name.length) + '\t' +
                 item.kills + ' '.repeat(longestKills - item.kills.toString(10).length) + '\t' +
                 item.deaths + ' '.repeat(longestDeaths - item.deaths.toString(10).length) + '\n';
 
@@ -102,15 +106,19 @@ function renderSingle(
         valueFn = itemKey;
     }
 
+    const longestRank = maxLength(items, translate('LEADERBOARD_RANK'), (item) => item.rank.toString(10));
     const longestName = maxLength(items, translate('LEADERBOARD_NAME'), (item) => item.name);
     const longestValue = maxLength(items, translate(titleKey), valueFn);
 
     if (renderInline) {
         let text = '```' +
+            translate('LEADERBOARD_RANK') + ' '.repeat(longestRank - translate('LEADERBOARD_RANK').length) + '\t' +
             translate('LEADERBOARD_NAME') + ' '.repeat(longestName - translate('LEADERBOARD_NAME').length) + '\t\t' +
             translate(titleKey) + ' '.repeat(longestValue - translate(titleKey).length) + '\n\n';
         for (let item of items) {
-            const toAppend = item.name + ' '.repeat(longestName - item.name.length) + '\t\t' +
+            const toAppend =
+                ' '.repeat(longestRank - item.rank.toString(10).length) + item.rank + '\t' +
+                item.name + ' '.repeat(longestName - item.name.length) + '\t\t' +
                 valueFn(item) + ' '.repeat(longestValue - valueFn(item).length) + '\n';
 
             if (text.length + 6 + toAppend.length >= MAX_DISCORD_FIELD_SIZE) {

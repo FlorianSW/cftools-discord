@@ -18,6 +18,7 @@ const messages: { [key: string]: string } = {
     LEADERBOARD_STAT_NOT_ALLOWED: 'The requested statistic is disabled. Choose one of the allowed ones: {{allowedStats}}',
     LEADERBOARD_STAT_NOT_KNOWN: 'The requested statistic is not known. Choose one of the allowed ones: {{allowedStats}}',
     LEADERBOARD_TITLE: 'Top {{amount}} {{metric}} on {{server}}',
+    LEADERBOARD_RANK: 'Rank',
     LEADERBOARD_NAME: 'Name',
     LEADERBOARD_KILLS: 'Kills',
     LEADERBOARD_DEATHS: 'Deaths',
