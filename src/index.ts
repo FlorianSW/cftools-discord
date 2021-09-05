@@ -104,7 +104,12 @@ class App {
     }
 }
 
-const config: ApplicationConfig = JSON.parse(fs.readFileSync(process.env.CONFIG_FILE!!).toString('utf-8'));
+const configPath = process.env.CONFIG_FILE || 'config.json';
+if (!fs.existsSync(configPath)) {
+    console.error('Config file does not exist at path: ' + configPath);
+    process.exit(1);
+}
+const config: ApplicationConfig = JSON.parse(fs.readFileSync(configPath).toString('utf-8'));
 
 let presenceConfig: PresenceConfig | undefined;
 if (config.discord && config.discord.presence && typeof config.discord.presence !== 'boolean') {
