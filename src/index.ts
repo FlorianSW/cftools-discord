@@ -88,7 +88,7 @@ class App {
                 resolve(client);
             });
             client.on('message', async (message: Message) => {
-                if (this.client?.user && message.mentions.has(this.client?.user) && isAllowedChannel(message)) {
+                if (this.client?.user && message.mentions.has(this.client?.user) && !message.mentions.everyone && isAllowedChannel(message)) {
                     await this.onMessage(message);
                 }
             });
