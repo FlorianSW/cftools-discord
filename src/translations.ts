@@ -4,8 +4,11 @@ const messages: { [key: string]: string } = {
     RESPONSE_LOADING_2: 'Glueing data together...',
     RESPONSE_LOADING_3: 'Release the Kraken! jk, please wait...',
 
+    CMD_OPTIONS_SERVER_TITLE: 'server',
+    CMD_OPTIONS_SERVER_DESCRIPTION: 'Select the server to execute this command for',
+
     HASPRIORITY_COMMAND_DESCRIPTION: 'Checks if the provided steam ID skips the queue (having priority queue) on the server.',
-    HASPRIORITY_COMMAND_USAGE: '{{mapping}} <Player-Steam-ID>',
+    HASPRIORITY_STEAM_ID_DESCRIPTION: 'The Steam ID of the player check for priority queue',
     PRIORITY_TITLE: 'Priority Queue information for {{id}}',
     NO_PRIORITY: 'You do not have priority queue for this server.',
     HAS_PRIORITY: 'You have priority queue for this server.',
@@ -14,9 +17,8 @@ const messages: { [key: string]: string } = {
     PRIORITY_NOT_CONFIGURED: 'The server has no priority queue configured.',
 
     LEADERBOARD_COMMAND_DESCRIPTION: 'Calculates a leaderboard for the provided statistic.',
-    LEADERBOARD_COMMAND_USAGE: '{{mapping}} [<statistic>]',
+    LEADERBOARD_STAT_DESCRIPTION: 'With what statistic the leaderboard should be calculated.',
     LEADERBOARD_STAT_NOT_ALLOWED: 'The requested statistic is disabled. Choose one of the allowed ones: {{allowedStats}}',
-    LEADERBOARD_STAT_NOT_KNOWN: 'The requested statistic is not known. Choose one of the allowed ones: {{allowedStats}}',
     LEADERBOARD_TITLE: 'Top {{amount}} {{metric}} on {{server}}',
     LEADERBOARD_RANK: 'Rank',
     LEADERBOARD_NAME: 'Name',
@@ -30,7 +32,7 @@ const messages: { [key: string]: string } = {
     LEADERBOARD_EMPTY_TITLE: 'No entries in leaderboard',
     LEADERBOARD_EMPTY_BODY: 'There was no data for the given statistic on that server.',
 
-    DETAILS_COMMAND_DESCRIPTION: 'Displays details about the game server, like how many players are currently online and what time it is in-game.',
+    DETAILS_COMMAND_DESCRIPTION: 'Displays details about the game server.',
     DETAILS_COMMAND_USAGE: '{{mapping}}',
     DETAILS_TITLE: 'Game server details for {{serverName}}',
     DETAILS_SERVER_NAME: ':name_badge: Server name',
@@ -41,7 +43,7 @@ const messages: { [key: string]: string } = {
     DETAILS_QUERY_ERROR: 'The server currently has troubles responding with information. Please try again later.',
 
     PLAYERSTATS_COMMAND_DESCRIPTION: 'Prints interesting statistics of a player, like playtime or the longest shot.',
-    PLAYERSTATS_COMMAND_USAGE: '{{mapping}} <Player-Steam-ID>',
+    PLAYERSTATS_STEAM_ID_DESCRIPTION: 'The Steam ID of the player to get statistics for',
     PLAYERSTATS_NAME: 'Player statistics for {{playerName}}',
     PLAYERSTATS_PLAYTIME: 'Playtime',
     PLAYERSTATS_KILLS: 'Kills',
@@ -49,20 +51,8 @@ const messages: { [key: string]: string } = {
     PLAYERSTATS_LONGEST_KILL: 'Longest kill',
     PLAYERSTATS_WEAPON_MOST_KILLS: 'Favorite weapon',
 
-    HELP_COMMAND_DESCRIPTION: 'Shows this help message. See the below list of available commands and see the help page of an individual command by executing the `help <command>` command.',
-    HELP_COMMAND_USAGE: '{{mapping}} <command>',
-    HELP_COMMAND_NOT_FOUND: 'The command was not found. Use `help` to show available commands.',
-    HELP_TITLE: 'CFTools Discord help',
-    HELP_DESCRIPTION: 'Description',
-    HELP_USAGE: 'Usage',
-    HELP_AVAILABLE_COMMANDS: 'Available commands',
-
     STEAM_ID_UNKNOWN: 'The provided Steam ID is unknown.',
-    ERROR_UNKNOWN_SERVER: 'The server identifier you provided is unknown.',
-    ERROR_UNKNOWN_COMMAND: 'The used command is unknown.',
-    ERROR_COMMAND_NOT_ALLOWED: 'You are not allowed to use this command.',
     ERROR_UNKNOWN: 'An unknown error occurred :woozy_face:',
-    ERROR_STEAM_ID_REQUIRED: 'You need to specify your Steam ID.',
 };
 
 interface TranslateOptions {

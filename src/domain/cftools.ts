@@ -5,15 +5,11 @@ export interface CFToolsServer {
         ip: string,
         port: number,
     },
-    commandMapping: { [key: string]: string | CommandId },
+    commands: { [command: string]: CommandConfig },
 }
 
-export type CommandConfig = { [key: string]: any }
-
-export interface CommandId {
-    command: string,
-    config: CommandConfig,
-    requiresRole?: string[],
+export type CommandConfig = {
+    [key: string]: any,
 }
 
 export class UnknownServer extends Error {

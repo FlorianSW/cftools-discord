@@ -1,13 +1,15 @@
 import {CFToolsServer} from './cftools';
-import {ActivityType} from 'discord.js';
+import {ExcludeEnum} from 'discord.js';
+import {ActivityTypes} from 'discord.js/typings/enums';
 
 export interface ApplicationConfig {
     servers: CFToolsServer[],
-    discordToken?: string,
     discord?: {
         token?: string,
         author?: string,
-        channels?: string[] | boolean,
+        guild: {
+            id: string,
+        },
         presence: PresenceConfig | boolean,
     },
     cftools: {
@@ -17,6 +19,6 @@ export interface ApplicationConfig {
 }
 
 export interface PresenceConfig {
-    type: ActivityType,
+    type: ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
     text: string,
 }

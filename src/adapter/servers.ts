@@ -1,80 +1,65 @@
 import {CommandFactory} from '../usecase/command';
-import {
-    CFToolsServer,
-    CommandConfig,
-    CommandId,
-    CommandNotAllowed,
-    UnknownCommand,
-    UnknownServer
-} from '../domain/cftools';
-import {Command} from '../domain/command';
-import {GuildMember} from 'discord.js';
+import {CFToolsServer, UnknownCommand, UnknownServer} from '../domain/cftools';
+import {Command, ParameterDescription} from '../domain/command';
 
 export class Servers {
     constructor(private readonly servers: CFToolsServer[], private readonly factories: Map<string, CommandFactory>) {
     }
 
-    newCommand(parameters: string[], forMember: GuildMember): Command {
-        if (this.servers.length === 1 && parameters.length === 0) {
-            throw new UnknownCommand();
-        }
-        if (this.servers.length !== 1 && parameters.length < 2) {
-            throw new UnknownCommand();
-        }
-        const server = this.findServer(parameters);
+    newCommand(cmdName: string, parameters: Map<string, string>): Command {
+        const server = this.findServer(cmdName, parameters);
         if (server === undefined) {
             throw new UnknownServer();
         }
-        const command = this.findCommand(server, parameters);
-        if (command === undefined) {
-            throw new UnknownCommand();
-        }
-        let factory: CommandFactory | undefined;
-        let config: CommandConfig | undefined;
-        if (typeof command === 'string') {
-            factory = this.factories.get(command);
-        } else {
-            factory = this.factories.get(command.command);
-            config = command.config;
-        }
+        const factory = this.factories.get(cmdName);
         if (factory === undefined) {
             throw new UnknownCommand();
         }
-        if (typeof command !== 'string' && command.requiresRole) {
-            const ownsRole = forMember.roles.cache.find((r) => command.requiresRole!!.includes(r.name));
-            if (!ownsRole) {
-                throw new CommandNotAllowed();
+        const config = server.commands[cmdName];
+
+        return factory(server, parameters, config);
+    }
+
+    availableCommands(): {
+        [name: string]: {
+            availableServers: string[],
+            availableParameters: ParameterDescription,
+        }
+    } {
+        const result: {
+            [name: string]: {
+                availableServers: string[],
+                availableParameters: ParameterDescription,
+            }
+        } = {};
+        for (let server of this.servers) {
+            for (let c of Object.keys(server.commands)) {
+                if (c in result) {
+                    result[c].availableServers.push(server.name);
+                } else {
+                    const factory = this.factories.get(c)!!;
+                    const command = factory(this.servers[0], new Map(), {});
+
+                    result[c] = {
+                        availableServers: [server.name],
+                        availableParameters: command.availableParameters(),
+                    };
+                }
             }
         }
-
-        let cmdParameters;
-        if (this.servers.length === 1 && parameters[0] !== server.name) {
-            cmdParameters = parameters.slice(1);
-        } else {
-            cmdParameters = parameters.slice(2);
-        }
-        return factory(server, cmdParameters, config);
+        return result;
     }
 
-    private findServer(parameters: string[]): CFToolsServer | undefined {
-        let server = this.servers.find((s) => s.name === parameters[0]);
-        if (server === undefined && this.servers.length === 1) {
-            return this.servers[0];
-        }
-        return server;
-    }
-
-    private findCommand(server: CFToolsServer, parameters: string[]): string | CommandId | undefined {
-        let cmd = '';
-        if (this.servers.length === 1 && parameters[0] !== server.name) {
-            cmd = parameters[0];
-        } else {
-            cmd = parameters[1];
-        }
-        const commandKey = Object.keys(server.commandMapping).find((c) => c.toLocaleLowerCase() === cmd.toLocaleLowerCase());
-        if (commandKey === undefined) {
+    private findServer(cmdName: string, parameters: Map<string, string>): CFToolsServer | undefined {
+        const cmd = this.availableCommands()[cmdName];
+        if (!cmd) {
             return undefined;
         }
-        return server.commandMapping[commandKey];
+        const cmdServers = cmd.availableServers;
+        let server = cmdServers.find((s) => s === parameters.get('server'));
+        if (server === undefined && cmdServers.length === 1) {
+            server = cmdServers[0];
+        }
+        return this.servers.find((s) => s.name === server);
     }
 }

@@ -7,25 +7,21 @@
         "ip": "127.0.0.1",
         "port": 2302
       },
-      "commandMapping": {
-        "hasPriority": "hasPriority",
-        "details": "details",
-        "stats": "playerStats",
-        "help": "help",
+      "commands": {
+        "haspriority": {},
+        "details": {},
+        "playerstats": {},
         "leaderboard": {
-          "command": "leaderboard",
-          "config": {
-            "defaultStat": "kills",
-            "allowedStats": [
-              "kills",
-              "deaths",
-              "suicides",
-              "playtime",
-              "longest_kill",
-              "longest_shot",
-              "kdratio"
-            ]
-          }
+          "defaultStat": "kills",
+          "allowedStats": [
+            "kills",
+            "deaths",
+            "suicides",
+            "playtime",
+            "longest_kill",
+            "longest_shot",
+            "kdratio"
+          ]
         }
       }
     }
@@ -33,7 +29,9 @@
   "discord": {
     "token": "Discord app token",
     "author": "Optional author name (remove to use default)",
-    "channels": false,
+    "guild": {
+      "id": "The Guild ID of your Discord server (right click on the server and select 'Copy ID' once you enabled the developer mode in Discord)"
+    },
     "presence": false
   },
   "cftools": {

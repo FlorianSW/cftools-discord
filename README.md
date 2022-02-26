@@ -3,6 +3,9 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/droidwiki/cftools-discord?style=flat-square)](https://hub.docker.com/r/droidwiki/cftools-discord)
 [![Discord](https://img.shields.io/discord/729467994832371813?color=7289da&label=Discord&logo=discord&logoColor=ffffff&style=flat-square)](https://go2tech.de/discord)
 
+> ⚠️With version 2 of this discord bot a lot of changes will be introduces onto how this tool works, how it is configured and what requirements need to be fulfilled to use it.
+> **DO NOT** update your installation if you did not read through the documentation and changed the necessary configuration and pre-requisites. 
+
 Provides a Discord bot to interact with the CFTools Cloud data which is exposed through the API.
 
 ## Installation and usage
@@ -76,44 +79,17 @@ The application you configured with the `cftools` configuration needs to have a 
 
 Each server required a `name`, which is used by your users when talking with the bot, so keep it short to ensure a good experience for your community.
 
-You can configure available commands for each server with the `commandMapping` property.
-It is an object where the key is the cas-insensitive command the user needs to type in when talking with the bot, and the value is the command the bot should execute then.
-The value needs to be one of the available commands in the bot (see below for a list of available commands).
-To disable a command, simply remove the command mapping from the object.
-
-Alternatively, some commands allow more in-depth configuration.
-In that case, the command (the value/right-hand side of the object) can be an object instead of the command name itself.
-The object has the following structure:
-
-```json
-{
-  "command": "commandName",
-  "requiresRole": [],
-  "config": {
-    // ...
-  }
-}
-```
-
-Where the value of `command` is one of the available commands (see below for a list of available commands).
-With `requiresRole` you can define which role the Discord member needs to have in order to execute the given command.
-The default (empty array `[]`) allows everyone to execute the command (no specific role needed).
-You can simply list the names of the roles that a user needs to hold.
-If you specify multiple roles, the user needs to hold _one_ of them (not _all_ of them).
-The `config` key is optional, as well as all the options that can be set there.
-If a configuration option (again, a key-value object) is not set, the default value of that option will be used.
-The available configuration options depend on the command that is being configured.
-See the available options in the list of available commands below.
+You can configure available commands for each server with the `commands` property.
+It is an object where the key is the lowercase command the user will use as a discord application command, and the value is the configuration of the command (if any), or an empty object.
+Check the list of available commands to know what commands you can use as the key in this configuration.
+To disable a command, simply remove the command from the object.
 
 #### Available commands
 
 Currently, the following commands are available:
 
-* `hasPriority`: Checks if the provided Steam ID has an entry in the priority queue list of the server.
+* `haspriority`: Checks if the provided Steam ID has an entry in the priority queue list of the server.
 
-  _Required input_: `SteamID`, example: `@BotName ServerName hasPriority 76561198012102485`
-  <br>
-  
   _Possible responses_:
   * Message that the player with the steam ID does not have priority queue for the server
   * Message indicating that the player has priority queue for the server and the date when it expires
@@ -121,9 +97,6 @@ Currently, the following commands are available:
 
 * `leaderboard`: Returns a leaderboard of most kills for the specified server.
 
-  _Required input_: nothing, example: `@BotName ServerName leaderboard`
-  <br>
-  
   _Possible responses_:
   * A leaderboard with up to 7 leaderboard entries, sorted descending starting with the player with the most kills.
     Shows kills and deaths for each player as well.
@@ -139,42 +112,17 @@ Currently, the following commands are available:
 
 * `details`: Prints some general server information, like the current time, players online, etc.
 
-  _Required input_: nothing, example: `@BotName ServerName details`
-  <br>
-  
   _Possible responses_:
   * A panel with a summary of available, general information about the server
   * An error message explaining that the server could not be found in CFTools Cloud
   <br>
 
-* `playerStats`: Prints statistics about the player associated with the provides Steam ID.
+* `playerstats`: Prints statistics about the player associated with the provides Steam ID.
 
-  _Required input_: `SteamID`, example: `@BotName ServerName stats 76561198012102485`
-  <br>
-  
   _Possible responses_:
   * A panel with a summary of available statistics about the player
   * An error message explaining that the Steam ID could not be found in CFTools Cloud
   <br>
-
-#### Limit the bot to specific channels
-
-You can configure the bot to listen to messages in specific channels only.
-To enable that feature, set the `channels` option in the `discord` object of the configuration to an array of channel names.
-For example:
-
-```json
-{
-  // ...
-  "discord": {
-    // ...
-    "channels": ["Channel 1", "Channel 2"]
-  }
-}
-```
-
-In order to disable this feature remove the `channels` property or set it to the value `false`.
-Doing so will make the bot to listen for messages in all channels.
 
 ### Setting the presence/activity in discord
 
@@ -208,21 +156,10 @@ While the `text` parameter is a freetext field (which may get truncated by disco
 
 ## Usage
 
-Once configured and added your discord server, the bot can be used by writing message to it.
-The basic format is as follows:
+The bot registers all available commands (of all servers) as discord slash commands (also known as application commands or simply commands).
+A user can interact with them by typing a `/` and selecting the desired command. The required and optional parameters for that specific command will be shown and requested by discord before the user can send the command to get a response.
 
-``@BotName [ServerName] command [...parameter]``
-
-Where:
-* `@BotName`: The name of the bot in your discord.
-  Users have to mention the bot to interact with it.
-  It does, however, do not need to be at the beginning of the message, though.
-* `ServerName`: The server name is the configured name of the server the users wants to have information of.
-  This option helps to support multiple game servers in one discord without the need to run multiple bot instances.
-  If you have only one server configured, you can omit the server name.
-* `command`: The command from the command mapping of the server you want to execute.
-* `...parameter`: 0 or more parameters for the command (like the Steam ID).
-  See the command reference for available parameters.
+Slash commands can not be used by everyone. Make sure that you give the roles and users who should be able to use slash commands the necessary rights (either on a specific channel or for your whole guild.
 
 ## Show the player count of the server in the status of the bot
 

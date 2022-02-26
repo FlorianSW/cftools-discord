@@ -1,4 +1,4 @@
-import {Command} from '../domain/command';
+import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer, CommandConfig} from '../domain/cftools';
 import {CFToolsClient, LeaderboardItem, ServerApiId, Statistic} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
@@ -84,9 +84,9 @@ function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], messag
         message.addField('\u200b', text);
     } else {
         for (let item of items) {
-            message.addField(item.rank, item.name, true)
-                .addField(translate('LEADERBOARD_KILLS'), item.kills, true)
-                .addField(translate('LEADERBOARD_DEATHS'), item.deaths, true);
+            message.addField(item.rank.toString(10), item.name, true)
+                .addField(translate('LEADERBOARD_KILLS'), item.kills.toString(10), true)
+                .addField(translate('LEADERBOARD_DEATHS'), item.deaths.toString(10), true);
         }
     }
     return message;
@@ -101,7 +101,16 @@ function renderSingle(
 ): MessageEmbed {
     let valueFn: (item: LeaderboardItem) => string;
     if (typeof itemKey === 'string') {
-        valueFn = (item: LeaderboardItem) => item[itemKey] as string
+        valueFn = (item: LeaderboardItem) => {
+            const v = item[itemKey];
+            if (typeof v === 'number') {
+                return v.toString(10);
+            } else if (typeof v === 'string') {
+                return v;
+            } else {
+                return JSON.stringify(v);
+            }
+        }
     } else {
         valueFn = itemKey;
     }
@@ -131,7 +140,7 @@ function renderSingle(
         message.addField('\u200b', text);
     } else {
         for (let item of items) {
-            message.addField(item.rank, item.name, true)
+            message.addField(item.rank.toString(10), item.name, true)
                 .addField('\u200b', '\u200b', true)
                 .addField(translate(titleKey), valueFn(item), true);
         }
@@ -142,7 +151,16 @@ function renderSingle(
 export class Leaderboard implements Command {
     public static readonly COMMAND = 'leaderboard';
 
-    constructor(private readonly server: CFToolsServer, private readonly parameters: string[], private readonly config: Config) {
+    constructor(private readonly server: CFToolsServer, private readonly parameters: Map<string, string>, private readonly config: Config) {
+    }
+
+    availableParameters(): ParameterDescription {
+        return {
+            statistic: {
+                description: translate('LEADERBOARD_STAT_DESCRIPTION'),
+                choices: Object.keys(statMapping),
+            }
+        };
     }
 
     async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
@@ -200,13 +218,11 @@ export class Leaderboard implements Command {
 
     private resolveCommand(): Mapping | string {
         let statCandidate = 'kills';
-        if (this.parameters.length === 1) {
-            statCandidate = this.parameters[0];
+        if (this.parameters.has('statistic')) {
+            statCandidate = this.parameters.get('statistic')!!;
         }
         let key: string | undefined = undefined;
-        if (!statMapping.hasOwnProperty(statCandidate)) {
-            key = 'LEADERBOARD_STAT_NOT_KNOWN';
-        } else if (!this.config.allowedStats.includes(statCandidate)) {
+        if (!this.config.allowedStats.includes(statCandidate)) {
             key = 'LEADERBOARD_STAT_NOT_ALLOWED';
         }
         if (key !== undefined) {

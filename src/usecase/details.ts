@@ -1,4 +1,4 @@
-import {Command} from '../domain/command';
+import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, Game, GameServerQueryError, ResourceNotFound} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
@@ -41,5 +41,9 @@ export class DetailsCommand implements Command {
             console.error(error);
             return translate('ERROR_UNKNOWN');
         }
+    }
+
+    availableParameters(): ParameterDescription {
+        return {};
     }
 }

@@ -1,11 +1,11 @@
-import {Command} from '../domain/command';
+import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, ResourceNotConfigured, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
 import {MessageEmbed} from 'discord.js';
 import {translate} from '../translations';
 
 export class CheckPriorityQueue implements Command {
-    public static readonly COMMAND = 'hasPriority';
+    public static readonly COMMAND = 'haspriority';
 
     constructor(private readonly server: CFToolsServer, private readonly steamId: SteamId64) {
     }
@@ -45,5 +45,14 @@ export class CheckPriorityQueue implements Command {
             console.error(error);
             return translate('ERROR_UNKNOWN');
         }
+    }
+
+    availableParameters(): ParameterDescription {
+        return {
+            steam_id: {
+                description: translate('HASPRIORITY_STEAM_ID_DESCRIPTION'),
+                required: true,
+            }
+        };
     }
 }
