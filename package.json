@@ -31,7 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^13.6.0",
-    "cftools-sdk": "^1.7.0",
+    "cftools-sdk": "^1.8.1",
     "dotenv": "^9.0.2"
   }
 }
