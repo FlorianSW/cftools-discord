@@ -1,0 +1,83 @@
+import {AutocompleteCommand, Command, ParameterDescription} from '../domain/command';
+import {CFToolsServer, CommandConfig} from '../domain/cftools';
+import {Banlist, CFToolsClient, CFToolsId, GenericId, IPAddress, ServerApiId, SteamId64} from 'cftools-sdk';
+import {translate} from '../translations';
+import {EmbedBuilder} from 'discord.js';
+import {isIPv4} from 'net';
+
+interface Config extends CommandConfig {
+    banlists: { [name: string]: string }
+}
+
+export class BanPlayer implements Command, AutocompleteCommand {
+    public static readonly COMMAND = 'banplayer';
+
+    constructor(private readonly server: CFToolsServer, private readonly parameters: Map<string, string>, private readonly config: Config) {
+    }
+
+    availableParameters(): ParameterDescription {
+        return {
+            player_id: {
+                description: translate('BAN_PLAYER_ID_DESCRIPTION'),
+                required: true,
+                autocomplete: true,
+            },
+            banlist: {
+                description: translate('BAN_BANLIST_DESCRIPTION'),
+                required: true,
+                autocomplete: true,
+            },
+        };
+    }
+
+    async autocomplete(cftools: CFToolsClient, p: string, v: string): Promise<Map<string, string>> {
+        const res = new Map<string, string>();
+        switch (p) {
+            case 'player_id':
+                const s = await cftools.listGameSessions({
+                    serverApiId: ServerApiId.of(this.server.serverApiId),
+                });
+                s.forEach((gs) => res.set(gs.playerName, 'ctools:' + gs.cftoolsId.id));
+                break;
+            case 'banlist':
+                Object.entries(this.config.banlists).forEach((v) => res.set(v[0], v[1]));
+        }
+        return res;
+    }
+
+    async execute(client: CFToolsClient, messageBuilder: EmbedBuilder): Promise<string | EmbedBuilder> {
+        const playerId = this.parameters.get('player_id');
+        let player: GenericId;
+        if (playerId?.startsWith('cftools:')) {
+            player = CFToolsId.of(playerId);
+        } else if (playerId && isIPv4(playerId)) {
+            player = IPAddress.ofIpv4(playerId);
+        } else if (playerId) {
+            player = SteamId64.of(playerId);
+        } else {
+            return translate('BAN_PLAYER_ID_REQUIRED');
+        }
+        const banlistId = this.parameters.get('banlist');
+        let banlist: Banlist;
+        if (!banlistId) {
+            return translate('BAN_BANLIST_REQUIRED');
+        } else if (Object.values(this.config.banlists).includes(banlistId)) {
+            banlist = Banlist.of(banlistId);
+        } else {
+            return translate('BAN_BANLIST_MISSING');
+        }
+        await client.putBan({
+            playerId: player,
+            list: banlist,
+            expiration: 'Permanent',
+            reason: 'Test-Ban by cftools-discord',
+        });
+        return translate('BAN_SUCCESS', {
+            params: {
+                name: player.id.toString(),
+                banlist: this.config.banlists[banlist.id],
+                expiration: 'Permanent',
+            },
+        });
+    }
+}

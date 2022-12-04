@@ -32,6 +32,14 @@ const messages: { [key: string]: string } = {
     LEADERBOARD_EMPTY_TITLE: 'No entries in leaderboard',
     LEADERBOARD_EMPTY_BODY: 'There was no data for the given statistic on that server.',
 
+    BANPLAYER_COMMAND_DESCRIPTION: 'Puts a player on a ban list, given they are not banned already.',
+    BAN_PLAYER_ID_DESCRIPTION: 'The player identifier to ban. Select from the suggestions or use a Steam ID64 or an IPv4 address',
+    BAN_BANLIST_DESCRIPTION: 'Select the banlist where the ban should be placed on',
+    BAN_PLAYER_ID_REQUIRED: 'You need to specify a valid player ID to ban',
+    BAN_BANLIST_REQUIRED: 'The banlist parameter is required',
+    BAN_BANLIST_MISSING: 'The specified banlist does not exist for this server',
+    BAN_SUCCESS: 'The player {{name}} was banned on {{banlist}} until {{expiration}}.',
+
     DETAILS_COMMAND_DESCRIPTION: 'Displays details about the game server.',
     DETAILS_COMMAND_USAGE: '{{mapping}}',
     DETAILS_TITLE: 'Game server details for {{serverName}}',

@@ -1,4 +1,11 @@
-import {ApplicationCommandDataResolvable, Client, Colors, Interaction} from 'discord.js';
+import {
+    ApplicationCommandDataResolvable,
+    AutocompleteInteraction,
+    Client,
+    Colors,
+    CommandInteraction,
+    Interaction
+} from 'discord.js';
 import {config as dotenv} from 'dotenv'
 import {CFToolsServer, CommandNotAllowed, UnknownCommand, UnknownServer, UsageError} from './domain/cftools';
 import {Servers} from './adapter/servers';
@@ -8,7 +15,7 @@ import {ApplicationConfig, PresenceConfig} from './domain/app';
 import {factories} from './usecase/command';
 import {translate} from './translations';
 import {ApplicationCommandOptionType, ApplicationCommandType} from 'discord.js';
-import {defaultResponse} from './domain/command';
+import {AutocompleteCommand, Command, defaultResponse, supportsAutocompletion} from './domain/command';
 
 dotenv();
 
@@ -37,7 +44,7 @@ class App {
     }
 
     private async onInteraction(interaction: Interaction): Promise<void> {
-        if (!interaction.isCommand()) {
+        if (!interaction.isCommand() && !interaction.isAutocomplete()) {
             return;
         }
         const parameters: Map<string, string> = new Map(interaction.options.data.map((o) => [o.name, o.value as string]));
@@ -45,8 +52,50 @@ class App {
             throw new UsageError('API users are not permitted to use cftools-discord slash commands.');
         }
 
+        let command: Command;
         try {
-            const command = this.servers.newCommand(interaction.commandName, parameters);
+            command = this.servers.newCommand(interaction.commandName, parameters);
+        } catch (e) {
+            let translateKey: string | undefined = undefined;
+            if (e instanceof UnknownServer) {
+                translateKey = 'ERROR_UNKNOWN_SERVER';
+            }
+            if (e instanceof UnknownCommand) {
+                translateKey = 'ERROR_UNKNOWN_COMMAND';
+            }
+            if (translateKey === undefined || !interaction.isCommand()) {
+                console.error('Unknown error occurred: ', e);
+                return;
+            }
+            await interaction.reply({
+                content: translate(translateKey),
+                embeds: [],
+            });
+            return;
+        }
+
+        if (interaction.isAutocomplete()) {
+            return this.autocompleteInteraction(interaction, command);
+        } else {
+            return this.commandInteraction(interaction, command);
+        }
+    }
+
+    private async autocompleteInteraction(interaction: AutocompleteInteraction, command: Command): Promise<void> {
+        if (supportsAutocompletion(command)) {
+            const param = interaction.options.getFocused(true);
+            const choices = await command.autocomplete(this.cftools, param.name, param.value);
+            await interaction.respond(Array.from(choices.entries()).map((v) => ({
+                name: v[0],
+                value: v[1],
+            })));
+        } else {
+            throw new Error('Received autocomplete interaction for non-autocomplete command.');
+        }
+    }
+
+    private async commandInteraction(interaction: CommandInteraction, command: Command): Promise<void> {
+        try {
             await interaction.reply({
                 ephemeral: false,
                 embeds: [defaultResponse().setColor(Colors.DarkGrey).setTitle(randomLoadingMessage())],
@@ -64,10 +113,12 @@ class App {
             }
         } catch (e) {
             if (e instanceof UsageError) {
-                await interaction.reply({
-                    content: e.message,
-                    embeds: [],
-                });
+                if (interaction.isCommand()) {
+                    await interaction.reply({
+                        content: e.message,
+                        embeds: [],
+                    });
+                }
                 return;
             }
 
@@ -85,10 +136,12 @@ class App {
                 console.error('Unknown error occurred: ', e);
                 return;
             }
-            await interaction.reply({
-                content: translate(translateKey),
-                embeds: [],
-            });
+            if (interaction.isCommand()) {
+                await interaction.reply({
+                    content: translate(translateKey),
+                    embeds: [],
+                });
+            }
         }
     }
 
@@ -159,7 +212,7 @@ class App {
                         name: name,
                         description: parameter.description,
                         required: parameter.required,
-                        autocomplete: parameter.choices === undefined,
+                        autocomplete: parameter.choices === undefined || parameter.autocomplete,
                         choices: parameter.choices?.map((c) => ({
                             name: c,
                             value: c,

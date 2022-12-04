@@ -5,6 +5,7 @@ import {CheckPriorityQueue} from './check-priority-queue';
 import {Leaderboard} from './leaderboard';
 import {DetailsCommand} from './details';
 import {PlayerStatistics} from './player-statistics';
+import {BanPlayer} from './ban-player';
 
 export type CommandFactory = (server: CFToolsServer, parameters: Map<string, string>, config?: CommandConfig) => Command;
 export const factories: Map<string, CommandFactory> = new Map<string, CommandFactory>([
@@ -23,6 +24,14 @@ export const factories: Map<string, CommandFactory> = new Map<string, CommandFac
                 defaultStat: 'kills',
                 numberOfPlayers: 7,
                 allowedStats: ['kills', 'deaths', 'suicides', 'playtime', 'longest_kill', 'longest_shot', 'kdratio']
+            },
+            ...config,
+        });
+    }],
+    [BanPlayer.COMMAND, (server, parameters, config) => {
+        return new BanPlayer(server, parameters, {
+            ...{
+                banlists: {},
             },
             ...config,
         });
