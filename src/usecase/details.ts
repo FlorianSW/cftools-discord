@@ -1,7 +1,7 @@
 import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, Game, GameServerQueryError, ResourceNotFound} from 'cftools-sdk';
-import {MessageEmbed} from 'discord.js';
+import {EmbedBuilder} from 'discord.js';
 import {translate} from '../translations';
 
 export class DetailsCommand implements Command {
@@ -10,7 +10,7 @@ export class DetailsCommand implements Command {
     constructor(private readonly server: CFToolsServer) {
     }
 
-    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: EmbedBuilder): Promise<string | EmbedBuilder> {
         try {
             const response = await client.getGameServerDetails({
                 game: Game.DayZ,
@@ -27,10 +27,12 @@ export class DetailsCommand implements Command {
                         serverName: this.server.name
                     }
                 }))
-                .addField(translate('DETAILS_SERVER_NAME'), response.name)
-                .addField(translate('DETAILS_MAP'), response.map, true)
-                .addField(translate('DETAILS_PLAYERS'), players, true)
-                .addField(translate('DETAILS_TIME'), response.environment.time, true);
+                .addFields([
+                    {name: translate('DETAILS_SERVER_NAME'), value: response.name, inline: false},
+                    {name: translate('DETAILS_MAP'), value: response.map, inline: true},
+                    {name: translate('DETAILS_PLAYERS'), value: players, inline: true},
+                    {name: translate('DETAILS_TIME'), value: response.environment.time, inline: true},
+                ]);
         } catch (error) {
             if (error instanceof ResourceNotFound) {
                 return translate('DETAILS_ERROR_SERVER_NOT_FOUND');

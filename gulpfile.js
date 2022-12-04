@@ -1,10 +1,10 @@
 const {series, dest} = require('gulp');
-const del = require('del');
 const ts = require("gulp-typescript");
 const tsProject = ts.createProject("tsconfig.json");
 
-function clean() {
-    return del('dist/**', {force: true});
+async function clean() {
+    const del = await import('del');
+    return del.deleteAsync('dist/**', {force: true});
 }
 
 function tsc() {

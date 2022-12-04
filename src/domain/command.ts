@@ -1,5 +1,5 @@
 import {CFToolsClient} from 'cftools-sdk';
-import {MessageEmbed} from 'discord.js';
+import {Colors, EmbedBuilder} from 'discord.js';
 
 export type ParameterDescription = {
     [name: string]: {
@@ -10,14 +10,14 @@ export type ParameterDescription = {
 };
 
 export interface Command {
-    execute(client: CFToolsClient, response: MessageEmbed): Promise<string | MessageEmbed>;
+    execute(client: CFToolsClient, response: EmbedBuilder): Promise<string | EmbedBuilder>;
 
     availableParameters(): ParameterDescription;
 }
 
-export function defaultResponse(): MessageEmbed {
-    return new MessageEmbed()
+export function defaultResponse(): EmbedBuilder {
+    return new EmbedBuilder()
         .setFooter({text: 'Bot made by FlorianSW with data from CFTools Cloud'})
         .setTimestamp(new Date())
-        .setColor('BLUE');
+        .setColor(Colors.Blue);
 }

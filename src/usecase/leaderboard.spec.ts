@@ -1,9 +1,9 @@
 import {Leaderboard} from './leaderboard';
 import {CFToolsClient, CFToolsClientBuilder, LeaderboardItem, Statistic} from 'cftools-sdk';
 import {translate} from '../translations';
-import {MessageEmbed} from 'discord.js';
 import {CFToolsServer} from '../domain/cftools';
 import Mock = jest.Mock;
+import {EmbedBuilder} from 'discord.js';
 
 const aServer = {
     serverApiId: 'A_SERVER_ID',
@@ -42,7 +42,7 @@ describe('Leaderboard', () => {
             allowedStats: ['kills', 'suicides'], defaultStat: 'kills', numberOfPlayers: 7,
         });
 
-        const response = await command.execute(new CFToolsClientBuilder().build(), new MessageEmbed());
+        const response = await command.execute(new CFToolsClientBuilder().build(), new EmbedBuilder());
 
         expect(response).toEqual(translate('LEADERBOARD_STAT_NOT_ALLOWED', {
             params: {
@@ -56,7 +56,7 @@ describe('Leaderboard', () => {
             allowedStats: ['deaths'], defaultStat: 'deaths', numberOfPlayers: 7,
         });
 
-        const response = await command.execute(new CFToolsClientBuilder().build(), new MessageEmbed());
+        const response = await command.execute(new CFToolsClientBuilder().build(), new EmbedBuilder());
 
         expect(response).toEqual(translate('LEADERBOARD_STAT_NOT_ALLOWED', {
             params: {
@@ -70,9 +70,9 @@ describe('Leaderboard', () => {
             allowedStats: ['kills', 'suicides'], defaultStat: 'suicides', numberOfPlayers: 7,
         });
 
-        const response = await command.execute(client as CFToolsClient, new MessageEmbed());
+        const response = await command.execute(client as CFToolsClient, new EmbedBuilder());
 
-        expect(response).toBeInstanceOf(MessageEmbed);
+        expect(response).toBeInstanceOf(EmbedBuilder);
         expect(client.getLeaderboard).toHaveBeenCalledTimes(1);
         const call = (client.getLeaderboard as Mock).mock.calls[0];
         expect(call[0]).toMatchObject({
@@ -93,7 +93,7 @@ describe('Leaderboard', () => {
             allowedStats: [stat], defaultStat: 'suicides', numberOfPlayers: 7,
         });
 
-        await command.execute(client as CFToolsClient, new MessageEmbed());
+        await command.execute(client as CFToolsClient, new EmbedBuilder());
 
         expect(client.getLeaderboard).toHaveBeenCalledTimes(1);
         const call = (client.getLeaderboard as Mock).mock.calls[0];

@@ -1,7 +1,7 @@
 import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
-import {MessageEmbed} from 'discord.js';
+import {EmbedBuilder} from 'discord.js';
 import {translate} from '../translations';
 import {secondsToHours} from '../seconds-to-hours';
 
@@ -11,7 +11,7 @@ export class PlayerStatistics implements Command {
     constructor(private readonly server: CFToolsServer, private readonly steamId: SteamId64) {
     }
 
-    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: EmbedBuilder): Promise<string | EmbedBuilder> {
         try {
             const response = await client.getPlayerDetails({
                 serverApiId: ServerApiId.of(this.server.serverApiId),
@@ -23,18 +23,23 @@ export class PlayerStatistics implements Command {
                     params: {
                         playerName: response.names[0]
                     }
-                }))
-                .addField(translate('PLAYERSTATS_PLAYTIME'), secondsToHours(response.playtime), true)
-                .addField(translate('PLAYERSTATS_KILLS'), response.statistics.kills.toString(10), true)
-                .addField(translate('PLAYERSTATS_DEATHS'), response.statistics.deaths.toString(10), true)
-                .addField(translate('PLAYERSTATS_LONGEST_KILL'), response.statistics.longestKill + 'm', true);
+                })).addFields([
+                {name: translate('PLAYERSTATS_PLAYTIME'), value: secondsToHours(response.playtime), inline: true},
+                {name: translate('PLAYERSTATS_KILLS'), value: response.statistics.kills.toString(10), inline: true},
+                {name: translate('PLAYERSTATS_DEATHS'), value: response.statistics.deaths.toString(10), inline: true},
+                {
+                    name: translate('PLAYERSTATS_LONGEST_KILL'),
+                    value: response.statistics.longestKill + 'm',
+                    inline: true
+                },
+            ]);
 
             const weapons = Object.entries(response.statistics.weaponsBreakdown).sort((w1, w2) => {
                 return w2[1].hits - w1[1].hits;
             });
             if (weapons.length > 0) {
                 const favoriteWeapon = weapons[0];
-                messageBuilder.addField(translate('PLAYERSTATS_WEAPON_MOST_KILLS'), favoriteWeapon[0]);
+                messageBuilder.addFields([{name: translate('PLAYERSTATS_WEAPON_MOST_KILLS'), value: favoriteWeapon[0]}]);
             }
 
             return messageBuilder;

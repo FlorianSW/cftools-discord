@@ -1,7 +1,7 @@
 import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer} from '../domain/cftools';
 import {CFToolsClient, ResourceNotConfigured, ResourceNotFound, ServerApiId, SteamId64} from 'cftools-sdk';
-import {MessageEmbed} from 'discord.js';
+import {Colors, EmbedBuilder} from 'discord.js';
 import {translate} from '../translations';
 
 export class CheckPriorityQueue implements Command {
@@ -10,7 +10,7 @@ export class CheckPriorityQueue implements Command {
     constructor(private readonly server: CFToolsServer, private readonly steamId: SteamId64) {
     }
 
-    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: EmbedBuilder): Promise<string | EmbedBuilder> {
         try {
             const response = await client.getPriorityQueue({
                 serverApiId: ServerApiId.of(this.server.serverApiId),
@@ -23,17 +23,17 @@ export class CheckPriorityQueue implements Command {
                     }
                 }));
             if (response === null) {
-                return message.setColor('DARK_RED')
+                return message.setColor(Colors.DarkRed)
                     .setDescription(translate('NO_PRIORITY'));
             } else {
-                return message.setColor('DARK_GREEN')
+                return message.setColor(Colors.DarkGreen)
                     .setDescription(translate('HAS_PRIORITY'))
-                    .addField(
-                        translate('PRIORITY_EXPIRES'),
-                        response?.expiration instanceof Date ?
+                    .addFields([{
+                        name: translate('PRIORITY_EXPIRES'),
+                        value: response?.expiration instanceof Date ?
                             (response.expiration as Date).toLocaleString() :
-                            translate('PRIORITY_EXPIRES_NEVER')
-                    )
+                            translate('PRIORITY_EXPIRES_NEVER'),
+                    }])
             }
         } catch (error) {
             if (error instanceof ResourceNotFound) {

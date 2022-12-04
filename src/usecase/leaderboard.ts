@@ -1,9 +1,9 @@
 import {Command, ParameterDescription} from '../domain/command';
 import {CFToolsServer, CommandConfig} from '../domain/cftools';
 import {CFToolsClient, LeaderboardItem, ServerApiId, Statistic} from 'cftools-sdk';
-import {MessageEmbed} from 'discord.js';
 import {translate} from '../translations';
 import {secondsToHours} from '../seconds-to-hours';
+import {EmbedBuilder} from 'discord.js';
 
 const MAX_DISCORD_FIELD_SIZE = 1024;
 
@@ -55,7 +55,7 @@ function maxLength(items: LeaderboardItem[], label: string, valueFn: (item: Lead
     return lengths.sort((a, b) => b - a)[0];
 }
 
-function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], message: MessageEmbed): MessageEmbed {
+function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], message: EmbedBuilder): EmbedBuilder {
     const longestRank = maxLength(items, translate('LEADERBOARD_RANK'), (item) => item.rank.toString(10));
     const longestName = maxLength(items, translate('LEADERBOARD_NAME'), (item) => item.name);
     const longestKills = maxLength(items, translate('LEADERBOARD_KILLS'), (item) => item.kills.toString(10));
@@ -81,12 +81,14 @@ function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], messag
             text += toAppend;
         }
         text += '```';
-        message.addField('\u200b', text);
+        message.addFields([{name: '\u200b', value: text}]);
     } else {
         for (let item of items) {
-            message.addField(item.rank.toString(10), item.name, true)
-                .addField(translate('LEADERBOARD_KILLS'), item.kills.toString(10), true)
-                .addField(translate('LEADERBOARD_DEATHS'), item.deaths.toString(10), true);
+            message.addFields([
+                {name: item.rank.toString(10), value: item.name, inline: true},
+                {name: translate('LEADERBOARD_KILLS'), value: item.kills.toString(10), inline: true},
+                {name: translate('LEADERBOARD_DEATHS'), value: item.deaths.toString(10), inline: true},
+            ]);
         }
     }
     return message;
@@ -95,10 +97,10 @@ function renderKillDeath(renderInline: boolean, items: LeaderboardItem[], messag
 function renderSingle(
     renderInline: boolean,
     items: LeaderboardItem[],
-    message: MessageEmbed,
+    message: EmbedBuilder,
     titleKey: string,
     itemKey: keyof LeaderboardItem | ((item: LeaderboardItem) => string),
-): MessageEmbed {
+): EmbedBuilder {
     let valueFn: (item: LeaderboardItem) => string;
     if (typeof itemKey === 'string') {
         valueFn = (item: LeaderboardItem) => {
@@ -137,12 +139,16 @@ function renderSingle(
             text += toAppend;
         }
         text += '```';
-        message.addField('\u200b', text);
+        message.addFields([{name: '\u200b', value: text}]);
     } else {
         for (let item of items) {
-            message.addField(item.rank.toString(10), item.name, true)
-                .addField('\u200b', '\u200b', true)
-                .addField(translate(titleKey), valueFn(item), true);
+            message.addFields([{
+                name: item.rank.toString(10), value: item.name, inline: true,
+            }, {
+                name: '\u200b', value: '\u200b', inline: true,
+            }, {
+                name: translate(titleKey), value: valueFn(item), inline: true,
+            }]);
         }
     }
     return message;
@@ -163,7 +169,7 @@ export class Leaderboard implements Command {
         };
     }
 
-    async execute(client: CFToolsClient, messageBuilder: MessageEmbed): Promise<string | MessageEmbed> {
+    async execute(client: CFToolsClient, messageBuilder: EmbedBuilder): Promise<string | EmbedBuilder> {
         const stat = this.resolveCommand();
         if (typeof stat === 'string') {
             return stat;
@@ -185,7 +191,10 @@ export class Leaderboard implements Command {
             }));
 
         if (response.length === 0) {
-            message.addField(translate('LEADERBOARD_EMPTY_TITLE'), translate('LEADERBOARD_EMPTY_BODY'));
+            message.addFields([{
+                name: translate('LEADERBOARD_EMPTY_TITLE'),
+                value: translate('LEADERBOARD_EMPTY_BODY'),
+            }]);
             return message;
         } else {
             return this.renderLeaderboard(stat, response, message);
@@ -196,7 +205,7 @@ export class Leaderboard implements Command {
         return this.config.numberOfPlayers * 3 > 25;
     }
 
-    private renderLeaderboard(stat: Mapping, response: LeaderboardItem[], message: MessageEmbed): MessageEmbed {
+    private renderLeaderboard(stat: Mapping, response: LeaderboardItem[], message: EmbedBuilder): EmbedBuilder {
         switch (stat.requestStatistic) {
             case Statistic.KILLS:
             case Statistic.DEATHS:

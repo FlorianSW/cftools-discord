@@ -1,4 +1,4 @@
-import {ApplicationCommandDataResolvable, Client, Interaction} from 'discord.js';
+import {ApplicationCommandDataResolvable, Client, Colors, Interaction} from 'discord.js';
 import {config as dotenv} from 'dotenv'
 import {CFToolsServer, CommandNotAllowed, UnknownCommand, UnknownServer, UsageError} from './domain/cftools';
 import {Servers} from './adapter/servers';
@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import {ApplicationConfig, PresenceConfig} from './domain/app';
 import {factories} from './usecase/command';
 import {translate} from './translations';
-import {ApplicationCommandOptionTypes, ApplicationCommandTypes} from 'discord.js/typings/enums';
+import {ApplicationCommandOptionType, ApplicationCommandType} from 'discord.js';
 import {defaultResponse} from './domain/command';
 
 dotenv();
@@ -49,7 +49,7 @@ class App {
             const command = this.servers.newCommand(interaction.commandName, parameters);
             await interaction.reply({
                 ephemeral: false,
-                embeds: [defaultResponse().setColor('DARK_GREY').setTitle(randomLoadingMessage())],
+                embeds: [defaultResponse().setColor(Colors.DarkGrey).setTitle(randomLoadingMessage())],
             });
             const response = await command.execute(this.cftools, defaultResponse().setAuthor({name: this.author}));
             if (typeof response === 'string') {
@@ -132,12 +132,12 @@ class App {
         for (let command of Object.entries(commands)) {
             const discordCommand: ApplicationCommandDataResolvable = {
                 name: command[0],
-                type: ApplicationCommandTypes.CHAT_INPUT,
+                type: ApplicationCommandType.ChatInput,
                 description: translate(`${command[0].toUpperCase()}_COMMAND_DESCRIPTION`),
             };
             if (command[1].availableServers.length !== 1) {
                 discordCommand.options = [{
-                    type: ApplicationCommandOptionTypes.STRING,
+                    type: ApplicationCommandOptionType.String,
                     name: translate('CMD_OPTIONS_SERVER_TITLE'),
                     description: translate('CMD_OPTIONS_SERVER_DESCRIPTION'),
                     required: command[1].availableServers.length !== 1,
@@ -155,7 +155,7 @@ class App {
                 for (let name of Object.keys(command[1].availableParameters)) {
                     const parameter = command[1].availableParameters[name];
                     discordCommand.options.push({
-                        type: ApplicationCommandOptionTypes.STRING,
+                        type: ApplicationCommandOptionType.String,
                         name: name,
                         description: parameter.description,
                         required: parameter.required,
