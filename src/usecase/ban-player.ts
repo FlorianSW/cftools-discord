@@ -4,6 +4,7 @@ import {Banlist, CFToolsClient, CFToolsId, GenericId, IPAddress, ServerApiId, St
 import {translate} from '../translations';
 import {EmbedBuilder} from 'discord.js';
 import {isIPv4} from 'net';
+import exp from 'constants';
 
 interface Config extends CommandConfig {
     banlists: { [name: string]: string }
@@ -27,6 +28,10 @@ export class BanPlayer implements Command, AutocompleteCommand {
                 required: true,
                 autocomplete: true,
             },
+            expiration: {
+                description: translate('BAN_EXPIRATION_DESCRIPTION'),
+                autocomplete: true,
+            },
         };
     }
 
@@ -41,6 +46,13 @@ export class BanPlayer implements Command, AutocompleteCommand {
                 break;
             case 'banlist':
                 Object.entries(this.config.banlists).forEach((v) => res.set(v[0], v[1]));
+                break;
+            case 'expiration':
+                res.set(translate('BAN_EXPIRATION_PERMANENT'), 'Permanent');
+                res.set(translate('BAN_EXPIRATION_IN_ONE_DAY'), new Date(new Date().getTime() + (60 * 60 * 24 * 1000)).toISOString());
+                res.set(translate('BAN_EXPIRATION_IN_ONE_WEEK'), new Date(new Date().getTime() + (60 * 60 * 24 * 7 * 1000)).toISOString());
+                res.set(translate('BAN_EXPIRATION_IN_ONE_MONTH'), new Date(new Date().getTime() + (60 * 60 * 24 * 31 * 1000)).toISOString());
+                break;
         }
         return res;
     }
@@ -66,18 +78,39 @@ export class BanPlayer implements Command, AutocompleteCommand {
         } else {
             return translate('BAN_BANLIST_MISSING');
         }
+        let expiration: Date | 'Permanent' = 'Permanent';
+        if (this.parameters.has('expiration') && this.parameters.get('expiration')) {
+            const e = this.parameters.get('expiration')!!;
+            try {
+                expiration = new Date(Date.parse(e));
+            } catch (err) {
+                return translate('BAN_INVALID_EXPIRATION', {params: {error: err as string}});
+            }
+        }
         await client.putBan({
             playerId: player,
             list: banlist,
-            expiration: 'Permanent',
+            expiration: expiration,
             reason: 'Test-Ban by cftools-discord',
         });
+        const bl = Object.entries(this.config.banlists).find((b) => b[1] === banlist.id);
+        let banlistName = 'server banlist';
+        if (bl) {
+            banlistName = bl[0];
+        }
         return translate('BAN_SUCCESS', {
             params: {
                 name: player.id.toString(),
-                banlist: this.config.banlists[banlist.id],
-                expiration: 'Permanent',
+                banlist: banlistName,
+                expiration: toString(expiration),
             },
         });
     }
+}
+
+function toString(s: Date | 'Permanent'): string {
+    if (typeof s === 'string') {
+        return s;
+    }
+    return s.toISOString();
 }

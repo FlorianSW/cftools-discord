@@ -207,12 +207,15 @@ class App {
 
                 for (let name of Object.keys(command[1].availableParameters)) {
                     const parameter = command[1].availableParameters[name];
+                    if (parameter.autocomplete && parameter.choices) {
+                        throw new Error('command ' + command[0] + ' parameter ' + name + ' cannot have autocomplete and choices');
+                    }
                     discordCommand.options.push({
                         type: ApplicationCommandOptionType.String,
                         name: name,
                         description: parameter.description,
                         required: parameter.required,
-                        autocomplete: parameter.choices === undefined || parameter.autocomplete,
+                        autocomplete: parameter.autocomplete,
                         choices: parameter.choices?.map((c) => ({
                             name: c,
                             value: c,
