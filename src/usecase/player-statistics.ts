@@ -18,6 +18,7 @@ export class PlayerStatistics implements Command {
                 playerId: this.steamId
             });
 
+            let allDeaths = Object.values(response.statistics.dayz.deaths).reduce((pv, cv) => pv + cv, 0);
             messageBuilder
                 .setTitle(translate('PLAYERSTATS_NAME', {
                     params: {
@@ -25,16 +26,16 @@ export class PlayerStatistics implements Command {
                     }
                 })).addFields([
                 {name: translate('PLAYERSTATS_PLAYTIME'), value: secondsToHours(response.playtime), inline: true},
-                {name: translate('PLAYERSTATS_KILLS'), value: response.statistics.kills.toString(10), inline: true},
-                {name: translate('PLAYERSTATS_DEATHS'), value: response.statistics.deaths.toString(10), inline: true},
+                {name: translate('PLAYERSTATS_KILLS'), value: response.statistics.dayz.kills.players.toString(10), inline: true},
+                {name: translate('PLAYERSTATS_DEATHS'), value: allDeaths.toString(10), inline: true},
                 {
                     name: translate('PLAYERSTATS_LONGEST_KILL'),
-                    value: response.statistics.longestKill + 'm',
+                    value: response.statistics.dayz.longestKill + 'm',
                     inline: true
                 },
             ]);
 
-            const weapons = Object.entries(response.statistics.weaponsBreakdown).sort((w1, w2) => {
+            const weapons = Object.entries(response.statistics.dayz.weapons).sort((w1, w2) => {
                 return w2[1].hits - w1[1].hits;
             });
             if (weapons.length > 0) {

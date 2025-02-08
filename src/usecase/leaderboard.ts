@@ -215,7 +215,7 @@ export class Leaderboard implements Command {
             case Statistic.PLAYTIME:
                 return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_PLAYTIME', (item: LeaderboardItem) => secondsToHours(item.playtime));
             case Statistic.KILL_DEATH_RATIO:
-                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_KD_RATIO', 'killDeathRation');
+                return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_KD_RATIO', 'killDeathRatio');
             case Statistic.LONGEST_KILL:
                 return renderSingle(this.mustRenderInline(), response, message, 'LEADERBOARD_LONGEST_KILL', (item: LeaderboardItem) => item.longestKill + 'm');
             case Statistic.LONGEST_SHOT:

@@ -1,14 +1,22 @@
-import {ApplicationCommandDataResolvable, Client, Colors, Interaction} from 'discord.js';
+import {
+    ApplicationCommandDataResolvable,
+    ApplicationCommandOptionData,
+    ApplicationCommandStringOptionData,
+    Client,
+    Colors,
+    Interaction
+} from 'discord.js';
 import {config as dotenv} from 'dotenv'
 import {CFToolsServer, CommandNotAllowed, UnknownCommand, UnknownServer, UsageError} from './domain/cftools';
 import {Servers} from './adapter/servers';
-import {CFToolsClient, CFToolsClientBuilder} from 'cftools-sdk';
+import {CFToolsClient, CFToolsClientBuilder, httpClient} from 'cftools-sdk';
 import * as fs from 'fs';
 import {ApplicationConfig, PresenceConfig} from './domain/app';
 import {factories} from './usecase/command';
 import {translate} from './translations';
-import {ApplicationCommandOptionType, ApplicationCommandType} from 'discord.js';
+import {ApplicationCommandOptionType, ApplicationCommandType} from 'discord-api-types/v10';
 import {defaultResponse} from './domain/command';
+import {GotHttpClient} from "cftools-sdk/lib/internal/http";
 
 dotenv();
 
@@ -148,13 +156,11 @@ class App {
                 }];
             }
             if (Object.keys(command[1].availableParameters).length !== 0) {
-                if (!discordCommand.options) {
-                    discordCommand.options = [];
-                }
+                const options: ApplicationCommandOptionData[] = [];
 
                 for (let name of Object.keys(command[1].availableParameters)) {
                     const parameter = command[1].availableParameters[name];
-                    discordCommand.options.push({
+                    options.push({
                         type: ApplicationCommandOptionType.String,
                         name: name,
                         description: parameter.description,
@@ -163,9 +169,10 @@ class App {
                         choices: parameter.choices?.map((c) => ({
                             name: c,
                             value: c,
-                        })),
-                    });
+                        }))
+                    } as ApplicationCommandStringOptionData);
                 }
+                discordCommand.options = options;
             }
             if (discordCommand.options?.length === 0 && registered.some((c) => c.name === command[0] && c.options.length !== 0)) {
                 console.log('Command ' + command[0] + ' is only available for one server, deleting existing command to update options...');
@@ -197,12 +204,18 @@ if (config.discord && config.discord.presence && typeof config.discord.presence 
 }
 
 console.log('Starting Discord Bot...');
+const builder = new CFToolsClientBuilder()
+    .withCredentials(config.cftools.applicationId, config.cftools.secret)
+    .withCache();
+if (process.env.LOGGING == 'debug') {
+    builder.withHttpClient((auth) => new GotHttpClient(httpClient(process.env.USE_ENTERPRISE_API === 'true', {
+        enableDebugLogging: true,
+        logBody: true,
+    }), auth))
+}
 const app = new App(
     config.servers,
-    new CFToolsClientBuilder()
-        .withCredentials(config.cftools.applicationId, config.cftools.secret)
-        .withCache()
-        .build(),
+    builder.build(),
     presenceConfig
 );
 app.setup().then(async () => {

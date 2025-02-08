@@ -1,5 +1,5 @@
 import {Leaderboard} from './leaderboard';
-import {CFToolsClient, CFToolsClientBuilder, LeaderboardItem, Statistic} from 'cftools-sdk';
+import {CFToolsClient, CFToolsClientBuilder, CFToolsId, LeaderboardItem, Statistic} from 'cftools-sdk';
 import {translate} from '../translations';
 import {CFToolsServer} from '../domain/cftools';
 import Mock = jest.Mock;
@@ -21,6 +21,7 @@ describe('Leaderboard', () => {
     beforeEach(() => {
         const partialClient = {
             getLeaderboard: jest.fn(() => Promise.resolve([{
+                id: CFToolsId.of('SomeId'),
                 playtime: 1024,
                 hits: 100,
                 environmentDeaths: 1,
@@ -30,7 +31,7 @@ describe('Leaderboard', () => {
                 longestShot: 100,
                 name: 'A_NAME',
                 deaths: 1,
-                killDeathRation: 2,
+                killDeathRatio: 2,
                 suicides: 0,
             } as LeaderboardItem]))
         } as Partial<CFToolsClient>;
